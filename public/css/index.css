@@ -10,6 +10,7 @@ body{
 header{
     height:62px;
     background-color:#009CA3;
+    box-shadow: 0px 4px 8px #00000029;
 }
 h1{
     padding-top:32px;
@@ -44,6 +45,19 @@ h1{
     font-size:19px;
 }
 
+#loading{
+    width:60px;
+    height:60px;
+    border:10px solid rgb(162, 200, 202);
+    border-radius:60px;
+    border-left-color:#009CA3;
+    animation:loading linear 1s infinite;
+    margin:auto;
+    margin-top:50px;
+}
+@keyframes loading{
+    to{transform:rotate(360deg)}
+}
 
 #restaurant-container{
     margin-top:6px;

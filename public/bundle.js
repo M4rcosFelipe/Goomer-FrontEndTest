@@ -8,11 +8,28 @@ function getRestaurants() {
 
 function _getRestaurants() {
   _getRestaurants = _asyncToGenerator(function* () {
-    const response = yield fetch("https://challange.goomer.com.br/restaurants");
-    const data = yield response.json();
-    renderRestaurants(data);
+    try {
+      const response = yield fetch("https://challange.goomer.com.br/restaurants");
+      const data = yield response.json();
+      return data;
+    } catch (error) {
+      console.log("Fetch failed: ", error);
+    }
   });
   return _getRestaurants.apply(this, arguments);
+}
+
+function loadRestaurants() {
+  return _loadRestaurants.apply(this, arguments);
+}
+
+function _loadRestaurants() {
+  _loadRestaurants = _asyncToGenerator(function* () {
+    data = yield getRestaurants();
+    document.querySelector("#loading").remove();
+    renderRestaurants(data);
+  });
+  return _loadRestaurants.apply(this, arguments);
 }
 
 function createRestaurantCard(_x) {
@@ -48,4 +65,4 @@ function _renderRestaurants() {
   return _renderRestaurants.apply(this, arguments);
 }
 
-getRestaurants();
+loadRestaurants();

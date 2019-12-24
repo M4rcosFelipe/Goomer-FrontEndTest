@@ -1,6 +1,17 @@
 async function getRestaurants(){
-  const response=await fetch("https://challange.goomer.com.br/restaurants")
-  const data=await response.json()
+  try{
+    const response=await fetch("https://challange.goomer.com.br/restaurants")
+    const data=await response.json()
+    return data
+  }catch(error){
+    console.log("Fetch failed: ",error)
+  }
+}
+
+async function loadRestaurants(){
+  
+  data=await getRestaurants()
+  document.querySelector("#loading").remove()
   renderRestaurants(data)
 }
 
@@ -27,4 +38,5 @@ async function renderRestaurants(data){
   
 }
 
-getRestaurants()
+loadRestaurants()
+
