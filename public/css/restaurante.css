@@ -1,16 +1,17 @@
-.main-content{
-    margin-top:24px;
-    margin-left:74px;
-    width:60%;
-    padding:0px;
-    float:left;
+#main-wrapper{
+    width:91%;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content: space-between;
+    margin:auto;
 }
 
-/* .restaurant-data{
-    display:grid;
-    grid-template-columns:145px minmax(auto,549px);
-    grid-column-gap:10px;
-} */
+.main-content{
+    margin-top:24px;
+    width:802px;
+    padding:0px; 
+}
+
 
 .restaurant-data{
     
@@ -232,11 +233,10 @@ aside{
     width:282px;
     height:765px;
     background-color:#E6E6E6;
-    float:right;
-    margin-right:74px;
-    
+    margin-left:15px;
     margin-top:185px;
 }
+
 
 
 .modal-container{
@@ -379,12 +379,18 @@ aside{
 }
 
 
-
-
-
-
-
-
-
-
+@media(max-width:1224px){
+    .main-content{
+        width:100%;
+    }
+    .options{
+        justify-content:start;
+    }
+    .restaurant-description{
+        margin-top:5px;
+    }
+    .horarios{
+        margin-top:5px;
+    }
+}
 
