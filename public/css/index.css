@@ -40,6 +40,9 @@ h1{
     background-repeat: no-repeat;
     background-position:98%;
 }
+#buscar{
+    display:none;
+}
 
 #search::placeholder{
     color:#494949;
@@ -47,11 +50,13 @@ h1{
 }
 
 #loading{
+    grid-column:1/4;
+    left:50%;
     width:60px;
     height:60px;
     border:10px solid rgb(162, 200, 202);
     border-radius:60px;
-    border-left-color:#009CA3;
+    border-top-color:#009CA3;
     animation:loading linear 1s infinite;
     margin:auto;
     margin-top:50px;
@@ -140,5 +145,23 @@ h1{
     background-color:#2B0D61;
 
 }
+
+
+#error{
+    grid-column:1/4;
+    margin:50px auto 0px auto;
+    text-align:center;
+    color:#404040;
+}
+
+#voltar{
+    margin-top:20px;
+    color:white;
+    background-color:#009CA3;
+    padding:10px;
+    text-decoration: none;
+    border-radius:4px;
+}
+
 
 

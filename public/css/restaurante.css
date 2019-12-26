@@ -1,5 +1,5 @@
 #main-wrapper{
-    width:91%;
+    width:89%;
     display:flex;
     flex-wrap:wrap;
     justify-content: space-between;
@@ -133,7 +133,7 @@ p{
     width:100%;
     margin:0px;  
     padding:0px;
-    justify-content: space-between;
+    justify-content: start;
 }
 
 .menu-item{
@@ -144,18 +144,21 @@ p{
     grid-template-columns:115px minmax(auto,271px);
     box-shadow: 0px 4px 8px #00000029;
     margin-top:24px;
-    cursor:pointer;
-    animation: mostrar 0.3s ;
-    
+    cursor:pointer;   
 } 
 
 @keyframes mostrar{
     from{opacity:0;}
     to{opacity:1;}
 }
+
+@keyframes esconder {
+    from{opacity:1;}
+    to{opacity:0;}
+}
 .checkbox-input:checked + .options .menu-item{
-    
     display:grid;
+    animation: mostrar 0.3s ;
 }
 
 .menu-item:hover{
@@ -239,10 +242,31 @@ aside{
 
 
 
+.fechar-modal{
+    box-sizing: border-box;
+    padding:12px;
+    width:48px;
+    height:48px;
+    border-radius:48px;
+    border:none;
+    cursor:pointer;
+    box-shadow:0px 2px 4px rgba(0,0,0,0.29);
+    background-color:#fff;
+
+    position:absolute;
+    right:-24px;
+    top:-24px;    
+}
+
+.icon-fechar{
+    width:24px;
+}
+
+
 .modal-container{
     width:100vw;
     height:100vh;
-    background-color:rgba(0,0,0,0.3);
+    background-color:rgba(0,0,0,0.29);
     clear:both;
     position:fixed;
     top:0px;
@@ -254,18 +278,16 @@ aside{
 }
 
 .modal-content{
+    position:relative;
     box-sizing: border-box;
     width:43%;
     height:auto;
     background-color: #fff;
     box-shadow: 0px 4px 8px #00000033;
     border-radius: 8px;
+    
 }
-.modal-image-container{
-    box-sizing: border-box;
-    width:100%;
-    padding:24px;
-}
+
 #modal-image{
     box-sizing: border-box;
     padding:23px 24px 0px 24px;
@@ -310,6 +332,9 @@ aside{
     color:#009CA3;
 }
 
+
+
+
 .botoes-quantidade{
     width:150px;
     display:grid;
@@ -342,6 +367,7 @@ aside{
     text-align:center;
     line-height: 50px;
     color:#009CA3;
+    cursor:pointer;
 }
 
 .mais{
@@ -367,25 +393,32 @@ aside{
     padding:13px;
     border-radius:4px;
     display:flex;
+    flex-wrap:wrap;
     justify-content: space-between;
     width:265px;
-    height:50px;
     background-color:#009CA3;
     color:#fff;
     font-size:20px;
     line-height:24px;
     margin-top:25px;
     margin-left:10px;
+    cursor:pointer;
+    text-align:center;
+
+}
+
+.span-preco{
+    margin-left:10px;
 }
 
 
-@media(max-width:1224px){
+@media(max-width:1251px){
     .main-content{
         width:100%;
     }
-    .options{
+    /* .options{
         justify-content:start;
-    }
+    } */
     .restaurant-description{
         margin-top:5px;
     }

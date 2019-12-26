@@ -14,12 +14,11 @@
 
 <div id="main-wrapper">
 
-
 <main class="main-content">
 
     <div class="restaurant-data">
         
-        <img class="restaurant--image"src="images/vegan-restaurant-logo-design_1438-10@2x.png">
+        <!-- <img class="restaurant--image"src="images/vegan-restaurant-logo-design_1438-10@2x.png">
 
         <div class="wrapper">
             <h1 class="restaurant--name">Nome do Restaurante</h1>
@@ -31,8 +30,9 @@
                 <p>Domingos e feriados :<span class="horario">11:30 às 15:00</span></p>
             </div>
 
-        </div>
-    </div>
+        </div> -->
+    </div> 
+
     <form class="form-search">
         <label><span class="search-span">Buscar no Cardápio</span><input class="buscar-no-cardapio" type="text"/></label>
     </form>
@@ -42,7 +42,7 @@
 
     <ul id="cardapio">
 
-        <li class="cardapio-item almocos">       <!--label + options > menu-items-->
+        <li class="cardapio-item almocos"> 
             <label for="almoco-options" id="cardapio-label">Almoços</label>
             <input type="checkbox" class="checkbox-input" id="almoco-options">
 
@@ -73,7 +73,7 @@
                 
 
                 <li class="menu-item">
-                    <img class="prato-image" src="./images/prato-de-restaurante-vegetariano.png">
+                    <img class="prato-image" src="./images/prato-de-restaurante-vegetariano.png"/>
 
                     <div class="prato-wrapper">
                         <div class="name-wrapper">                         
@@ -441,6 +441,32 @@
     <aside></aside>
 
 
+</div>
+
+
+<div class="modal-container">
+    <div class="modal-content">
+        <button class="fechar-modal">
+            <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
+        </button>
+            <img id="modal-image" src="images/prato-de-restaurante-vegetariano@2x-modal.png">
+
+        <p class="modal-nome">Nome do Prato</p>
+
+        <div class="flex-text">
+            <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="modal-preco">R$19,90</p>
+        </div>
+
+        <div class="actions">
+            <div class="botoes-quantidade">
+                <div class="botao menos">&ndash;</div>
+                <input type="text" value="1" id="quantidade">
+                <div class="botao mais">+</div>
+            </div>
+            <div class="adicionar">Adicionar<span class="span-preco">R$19,90</span></div>
+        </div>
+    </div>
 </div>
 
 
