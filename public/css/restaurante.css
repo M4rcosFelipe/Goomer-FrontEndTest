@@ -21,6 +21,7 @@
 
 .restaurant--image{
     width:145px;
+    height:145px;
 }
 
 .restaurant--name{
@@ -37,7 +38,9 @@
     grid-template-rows:auto auto auto;
     justify-items:start;
     align-items:center;
-    padding:10px;
+    padding:0px;
+    padding-left:10px;
+
 
 }
 p{
@@ -75,6 +78,10 @@ p{
     padding-left:15px;
     padding-right:34px;
     color:#404040;
+}
+
+#search-button{
+    display:none;
 }
 
 .search-span{
@@ -136,15 +143,15 @@ p{
     justify-content: start;
 }
 
-.menu-item{
-    display: none;
-}
+
 .menu-item{
     box-sizing: border-box;
     grid-template-columns:115px minmax(auto,271px);
     box-shadow: 0px 4px 8px #00000029;
     margin-top:24px;
-    cursor:pointer;   
+    cursor:pointer;
+    display: none;
+   
 } 
 
 @keyframes mostrar{
@@ -167,6 +174,7 @@ p{
 
 .prato-image{
     width:115px;
+    height:115px;
 }
 
 .prato-name{
