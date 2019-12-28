@@ -6,8 +6,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 let groups = [];
 let listaRestaurantes;
 const DEFAULT_IMAGE = "../public/images/dish.png";
-const DEFAULT_PRICE = "0.0";
-const DEFAULT_PROMO = "0.0";
+const DEFAULT_PRICE = 0;
+const DEFAULT_PROMO = 0;
 const RESTAURANT_ID = getId();
 var menuData = "";
 
@@ -23,10 +23,8 @@ function setMenuData() {
 
 function _setMenuData() {
   _setMenuData = _asyncToGenerator(function* () {
-    console.log("menuData em 'setMenuData': ", menuData);
     const resposta = yield getMenu();
     menuData = resposta;
-    console.log("menuData em 'setMenuData' apos atribuição: ", menuData);
   });
   return _setMenuData.apply(this, arguments);
 }
@@ -151,8 +149,6 @@ function createMenuLabels() {
 
 function _createMenuLabels() {
   _createMenuLabels = _asyncToGenerator(function* () {
-    console.log("menuData em createMenuLabels= ", menuData);
-
     for (let i = 0; i < menuData.length; i++) {
       if (groups.indexOf(capitalize(menuData[i].group)) === -1) {
         groups.push(capitalize(menuData[i].group));
@@ -184,57 +180,77 @@ function createMenuOptions() {
 function _createMenuOptions() {
   _createMenuOptions = _asyncToGenerator(function* () {
     for (let i = 0; i < groups.length; i++) {
-      console.log(groups.length);
       const label = document.querySelector("." + toCleanString(groups[i]));
-      label.innerHTML += yield createMenuOptionsItem(groups[i]);
+      label.innerHTML = yield createMenuOptionsItems(groups[i]);
     }
   });
   return _createMenuOptions.apply(this, arguments);
 }
 
-function createMenuOptionsItem(_x) {
-  return _createMenuOptionsItem.apply(this, arguments);
-} //renderizando input
+function createMenuOptionsItems(_x) {
+  return _createMenuOptionsItems.apply(this, arguments);
+}
+/* <div class="promo">
+<img class="logo-promo" src="./images/award.svg"/>
+Promo Almoço
+</div> */
+//renderizando input
 
 
-function _createMenuOptionsItem() {
-  _createMenuOptionsItem = _asyncToGenerator(function* (group) {
+function _createMenuOptionsItems() {
+  _createMenuOptionsItems = _asyncToGenerator(function* (group) {
+    let optionsData = "";
+
     for (let j = 0; j < menuData.length; j++) {
-      if (toCleanString(menuData[j].group) === toCleanString(group)) {
-        if (!menuData[j].price) {
-          menuData[j].price = DEFAULT_PRICE;
+      const menuItemData = ({} = menuData[j]);
+
+      if (toCleanString(menuItemData.group) === toCleanString(group)) {
+        if (!menuItemData.price) {
+          menuItemData.price = DEFAULT_PRICE;
         }
 
-        if (!menuData[j].image) {
-          menuData[j].image = DEFAULT_IMAGE;
+        if (!menuItemData.image) {
+          menuItemData.image = DEFAULT_IMAGE;
         }
 
-        if (!menuData[j].promo) {
-          menuData[j].promo = DEFAULT_PROMO;
+        if (!menuItemData.promo) {
+          menuItemData.promo = DEFAULT_PROMO;
         }
 
-        return ` <li class="menu-item">
-                        <img class="prato-image" src="${menuData[j].image}">
+        if (menuItemData.sales) {
+          //if(é dia de promo){
+          menuItemData.promo = `<div class="promo">
+                                        <img class="logo-promo" src="./images/award.svg"/>
+                                        Promo Almoço
+                                    </div>`;
+          menuItemData.pricePromo = menuItemData.sales[0].price; //}
+        } else {
+          menuItemData.pricePromo = DEFAULT_PROMO;
+          menuItemData.promo = "";
+        }
+
+        console.log(menuItemData);
+        optionsData += ` <li class="menu-item" onclick="showModal(${j})">
+                        <img class="prato-image" src="${menuItemData.image}">
                         <div class="prato-wrapper">
                             <div class="name-wrapper">                         
-                                <h1 class="prato-name">${menuData[j].name}</h1>
-
-                                <div class="promo">
-                                    <img class="logo-promo" src="./images/award.svg"/>
-                                    Promo Almoço
-                                </div>
+                                <h1 class="prato-name">${menuItemData.name}</h1>
+                                ${menuItemData.promo}
+                               
                             </div>  
                             <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
                     
                             <div class="preco">
-                                <p>R$${menuData[j].price}</p><strike>R$${menuData[j].promo}</strike>
+                                <p>R$${menuItemData.price.toFixed(2)}</p><strike>R$${menuItemData.pricePromo.toFixed(2)}</strike>
                             </div>
                         </div>
                     </li>`;
       }
     }
+
+    return optionsData;
   });
-  return _createMenuOptionsItem.apply(this, arguments);
+  return _createMenuOptionsItems.apply(this, arguments);
 }
 
 function renderInputSearch() {
@@ -276,6 +292,72 @@ function createSearchEvent() {
       searchButton.click();
     }
   });
+} // MODAL //
+
+
+function showModal(index) {
+  const modalData = menuData[index];
+  const modal = createModal(modalData);
+  const header = document.querySelector("header");
+  header.insertAdjacentHTML("beforebegin", modal);
+}
+
+function createModal(data) {
+  return `<div class="modal-container">
+    <div class="modal-content">
+        <button class="fechar-modal" onclick="fechaModal()">
+            <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
+        </button>
+            <img id="modal-image" src="${data.image}">
+
+        <p class="modal-nome">${data.name}</p>
+
+        <div class="flex-text">
+            <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="modal-preco">R$ ${data.price.toFixed(2)}</p>
+        </div>
+
+        <div class="actions">
+            <div class="botoes-quantidade">
+                <div class="botao menos" onclick=changeQuantity("menos")>&ndash;</div>
+                <input type="text"  id="quantidade" value="1">
+                <div class="botao mais" onclick=changeQuantity("mais")>+</div>
+            </div>
+            <div class="adicionar">Adicionar<span class="span-preco">R$ ${data.price.toFixed(2)}</span></div>
+        </div>
+    </div>
+</div>`;
+}
+
+function fechaModal() {
+  const modal = document.querySelector(".modal-container");
+  modal.remove();
+}
+
+function changeQuantity(operation) {
+  const inputQuantidade = document.querySelector("#quantidade");
+  const itemPreco = document.querySelector(".modal-preco");
+  const spanPreco = document.querySelector(".span-preco");
+
+  if (operation === "menos") {
+    if (Number(inputQuantidade.value) - 1 < 1) return;
+    inputQuantidade.value--;
+  } else {
+    if (Number(inputQuantidade.value) + 1 > 9999) return;
+    inputQuantidade.value++;
+  }
+
+  const valor = itemPreco.innerText;
+  let valorPreco = "";
+
+  for (let i = 0; i < valor.length; i++) {
+    if (valor[i] !== "R" && valor[i] !== "$" && valor[i] !== " ") {
+      valorPreco += valor[i];
+    }
+  }
+
+  valorPreco = Number(valorPreco);
+  spanPreco.innerText = "R$ " + (inputQuantidade.value * valorPreco).toFixed(2);
 } //chamadas//
 
 

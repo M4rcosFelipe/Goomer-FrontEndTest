@@ -138,7 +138,6 @@ botaoBuscar.addEventListener("click",function(){
   putLoading()
   setTimeout(search,100)
 })
-// botaoBuscar.onclick=search
 
 loadRestaurants()
 

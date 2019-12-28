@@ -3,8 +3,8 @@
 let groups=[]
 let listaRestaurantes
 const DEFAULT_IMAGE="../public/images/dish.png"
-const DEFAULT_PRICE="0.0"
-const DEFAULT_PROMO="0.0"
+const DEFAULT_PRICE=0
+const DEFAULT_PROMO=0
 const RESTAURANT_ID=getId()
 
 var menuData=""
@@ -16,10 +16,8 @@ function getId(){
 
 
 async function setMenuData(){
-    console.log("menuData em 'setMenuData': ",menuData)
     const resposta=await getMenu()
     menuData=resposta
-    console.log("menuData em 'setMenuData' apos atribuição: ",menuData)
 
 }
 
@@ -133,7 +131,6 @@ async function createMenu(){
 
 async function createMenuLabels(){
 
-console.log("menuData em createMenuLabels= ",menuData)
 
     for(let i=0;i<menuData.length;i++){
         if(groups.indexOf(capitalize(menuData[i].group))===-1){
@@ -164,47 +161,72 @@ console.log("menuData em createMenuLabels= ",menuData)
 
 async function createMenuOptions(){
     for(let i=0;i<groups.length;i++){
-        console.log(groups.length)
         const label=document.querySelector("."+toCleanString(groups[i]))
-        label.innerHTML+=await createMenuOptionsItem(groups[i])
+        label.innerHTML=await createMenuOptionsItems(groups[i])
     }
 }
 
 
 
 
-async function createMenuOptionsItem(group){
+async function createMenuOptionsItems(group){
+
+    let optionsData=""
 
     for(let j=0;j<menuData.length;j++){
 
-        if(toCleanString(menuData[j].group)===toCleanString(group)){
+        const menuItemData={}=menuData[j]
+
+        if(toCleanString(menuItemData.group)===toCleanString(group)){
 
 
-            if(!menuData[j].price) {menuData[j].price=DEFAULT_PRICE}
-            if(!menuData[j].image) {menuData[j].image=DEFAULT_IMAGE}
-            if(!menuData[j].promo){menuData[j].promo=DEFAULT_PROMO}
 
-            return ` <li class="menu-item">
-                        <img class="prato-image" src="${menuData[j].image}">
+            if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}
+            if(!menuItemData.image) {menuItemData.image=DEFAULT_IMAGE}
+            if(!menuItemData.promo){menuItemData.promo=DEFAULT_PROMO}
+            if(menuItemData.sales){
+                //if(é dia de promo){
+
+                menuItemData.promo=`<div class="promo">
+                                        <img class="logo-promo" src="./images/award.svg"/>
+                                        Promo Almoço
+                                    </div>`;
+                                    menuItemData.pricePromo=menuItemData.sales[0].price
+                                
+                            //}
+                        }else{
+                                    menuItemData.pricePromo=DEFAULT_PROMO
+                                    menuItemData.promo=""
+                                }
+                                console.log(menuItemData)
+
+
+            optionsData+= ` <li class="menu-item" onclick="showModal(${j})">
+                        <img class="prato-image" src="${menuItemData.image}">
                         <div class="prato-wrapper">
                             <div class="name-wrapper">                         
-                                <h1 class="prato-name">${menuData[j].name}</h1>
-
-                                <div class="promo">
-                                    <img class="logo-promo" src="./images/award.svg"/>
-                                    Promo Almoço
-                                </div>
+                                <h1 class="prato-name">${menuItemData.name}</h1>
+                                ${menuItemData.promo}
+                               
                             </div>  
                             <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
                     
                             <div class="preco">
-                                <p>R$${menuData[j].price}</p><strike>R$${menuData[j].promo}</strike>
+                                <p>R$${menuItemData.price.toFixed(2)}</p><strike>R$${menuItemData.pricePromo.toFixed(2)}</strike>
                             </div>
                         </div>
                     </li>`
         }
     }
+    return optionsData
 }
+
+
+/* <div class="promo">
+<img class="logo-promo" src="./images/award.svg"/>
+Promo Almoço
+</div> */
+
 
 //renderizando input
 
@@ -258,10 +280,86 @@ function createSearchEvent(){
     
 }
 
+// MODAL //
+
+
+function showModal(index){
+    
+    const modalData=menuData[index]
+    const modal=createModal(modalData)
+    const header=document.querySelector("header")
+    header.insertAdjacentHTML("beforebegin",modal)
+
+}
+
+function createModal(data){
+
+    return `<div class="modal-container">
+    <div class="modal-content">
+        <button class="fechar-modal" onclick="fechaModal()">
+            <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
+        </button>
+            <img id="modal-image" src="${data.image}">
+
+        <p class="modal-nome">${data.name}</p>
+
+        <div class="flex-text">
+            <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="modal-preco">R$ ${data.price.toFixed(2)}</p>
+        </div>
+
+        <div class="actions">
+            <div class="botoes-quantidade">
+                <div class="botao menos" onclick=changeQuantity("menos")>&ndash;</div>
+                <input type="text"  id="quantidade" value="1">
+                <div class="botao mais" onclick=changeQuantity("mais")>+</div>
+            </div>
+            <div class="adicionar">Adicionar<span class="span-preco">R$ ${data.price.toFixed(2)}</span></div>
+        </div>
+    </div>
+</div>`
+}
+
+
+function fechaModal(){
+    const modal=document.querySelector(".modal-container")
+    modal.remove()
+}
 
 
 
 
+function changeQuantity(operation){
+    const inputQuantidade=document.querySelector("#quantidade")
+    const itemPreco=document.querySelector(".modal-preco")
+    const spanPreco=document.querySelector(".span-preco")
+
+
+    if(operation==="menos"){
+        if(Number(inputQuantidade.value)-1<1) return
+
+        inputQuantidade.value--
+    }else{
+        if(Number(inputQuantidade.value)+1>9999) return
+
+        inputQuantidade.value++
+    }
+
+    const valor=itemPreco.innerText
+
+    let valorPreco=""
+
+    for(let i=0;i<valor.length;i++){
+        if(valor[i]!=="R" && valor[i]!=="$" && valor[i]!==" "){
+            valorPreco+=valor[i]
+        }
+    }
+    valorPreco=Number(valorPreco)
+
+
+    spanPreco.innerText="R$ "+(inputQuantidade.value*valorPreco).toFixed(2)
+
+}
 
 
 //chamadas//
