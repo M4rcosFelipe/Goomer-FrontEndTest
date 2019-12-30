@@ -45,7 +45,8 @@ function createRestaurantCard(_x) {
 function _createRestaurantCard() {
   _createRestaurantCard = _asyncToGenerator(function* (restaurant) {
     return `<a  href="restaurante.html?restaurante=${restaurant.id}" class="restaurant-status">
-    <div class="status fechado">STATUS</div>
+  <div class="status fechado">STATUS</div>
+
     <div class="restaurant">
         <img class="restaurant-image" src=${restaurant.image}>
         <p class="restaurant-name">${restaurant.name}</p>
@@ -62,8 +63,7 @@ function renderRestaurants(_x2) {
 
 function _renderRestaurants() {
   _renderRestaurants = _asyncToGenerator(function* (data) {
-    restaurantSection.innerHTML = "";
-
+    // restaurantSection.innerHTML=""
     for (let i = 0; i < data.length; i++) {
       restaurantSection.innerHTML += yield createRestaurantCard(data[i]);
     }
@@ -95,8 +95,8 @@ function search() {
 
   for (let i = 0; i < listaRestaurantes.length; i++) {
     if (palavra === toCleanString(listaRestaurantes[i].name)) {
-      console.log("nome do restaurante ", listaRestaurantes[i].name);
-      console.log("nome do restaurante limpo= ", toCleanString(listaRestaurantes[i].name));
+      // console.log("nome do restaurante ",listaRestaurantes[i].name)
+      // console.log("nome do restaurante limpo= ",toCleanString(listaRestaurantes[i].name))
       findedRestaurants.push(listaRestaurantes[i]);
     }
   }
@@ -134,6 +134,5 @@ inputSearch.addEventListener("keyup", function (event) {
 botaoBuscar.addEventListener("click", function () {
   putLoading();
   setTimeout(search, 100);
-}); // botaoBuscar.onclick=search
-
+});
 loadRestaurants();

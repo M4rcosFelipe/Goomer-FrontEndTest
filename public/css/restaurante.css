@@ -216,10 +216,6 @@ p{
     margin-right:3.5px;
 }
 
-.prato-name{
-    margin:0px;
-    padding:0px;
-}
 .prato-description{
     margin:0px;
     padding:0px;
@@ -293,10 +289,9 @@ aside{
 }
 
 .modal-content{
-    position:relative;
+    position:absolute;
     box-sizing: border-box;
     width:43%;
-    height:auto;
     background-color: #fff;
     box-shadow: 0px 4px 8px #00000033;
     border-radius: 8px;
@@ -435,9 +430,7 @@ aside{
     .main-content{
         width:100%;
     }
-    /* .options{
-        justify-content:start;
-    } */
+ 
     .restaurant-description{
         margin-top:5px;
     }

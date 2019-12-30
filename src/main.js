@@ -23,10 +23,19 @@ async function loadRestaurants(){
   renderRestaurants(data)
 }
 
+
+function isOpen(restaurante){
+  
+}
+
+
 async function createRestaurantCard(restaurant){
 
+  const status=isOpen(restaurant)
+
   return `<a  href="restaurante.html?restaurante=${restaurant.id}" class="restaurant-status">
-    <div class="status fechado">STATUS</div>
+  <div class="status fechado">STATUS</div>
+
     <div class="restaurant">
         <img class="restaurant-image" src=${restaurant.image}>
         <p class="restaurant-name">${restaurant.name}</p>
@@ -39,7 +48,7 @@ async function createRestaurantCard(restaurant){
 
 async function renderRestaurants(data){
 
-  restaurantSection.innerHTML=""
+  // restaurantSection.innerHTML=""
 
 
   for(let i=0;i<data.length;i++){

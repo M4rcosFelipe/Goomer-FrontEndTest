@@ -142,6 +142,101 @@ function convertDias(lista){
 
 //criando menu
 
+//funções de data
+
+function isPromo(menuItemData){
+
+    let response=""
+
+    for(let j=0;j<menuItemData.sales.length;j++){
+        response=verificaPromo(menuItemData.sales[j])
+
+        if(response){
+            break
+        }
+    }
+    return response
+}
+
+
+function converteHora(stringHora){
+    let hora=""
+    for(let i=0;i<2;i++){
+       hora+=stringHora[i]
+    }
+
+    if(hora[0]==="0"){
+        hora=hora[1]
+    }
+    return hora
+
+}
+
+function verificaDia(dias){
+    //verifica se é DIA de promoção
+
+    const today=new Date()
+
+         //teste
+    // today.setDate() 
+
+    const diaAtual=today.getDay()+1
+
+    console.log(`Dia atual: ${diaAtual}`)
+
+
+    const isDay=dias.days.indexOf(diaAtual)
+
+    return isDay!==-1?true:false
+}
+
+
+function verificaHora(horas){
+
+    const from=converteHora(horas.from)
+    const to=converteHora(horas.to)
+
+    const now=new Date()
+        //teste
+    // now.setHours()
+
+    console.log(`Hora atual: ${now.getHours()}`)
+    console.log(`from: ${from}`)
+    console.log(`to: ${to}`)
+
+    if(now.getHours()>=from && now.getHours()<=to){
+
+        return true
+    }else{
+
+        return false
+    }
+
+}
+
+
+
+function verificaPromo(salesData){//1 elemento do array de sales
+
+    let isPromoHour
+    let isPromoDay
+
+    for(let i=0;i<salesData.hours.length;i++){
+
+    //verifica se é Dia de promoção
+        isPromoDay=verificaDia(salesData.hours[i])
+
+    //verifica se é hora de promoção
+        isPromoHour=verificaHora(salesData.hours[i])
+
+        if(isPromoHour && isPromoDay){
+            return true
+        }
+
+    }
+    return false
+}
+//
 async function createMenu(){
     const cardapio=document.querySelector("#cardapio")
 
@@ -199,25 +294,34 @@ function createOptionsItem(data,index){
 
 
     const menuItemData=data
+    
+    
+    
 
     if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}
     if(!menuItemData.image) {menuItemData.image=DEFAULT_IMAGE}
-    if(!menuItemData.promo){menuItemData.promo=DEFAULT_PROMO}
+    if(!menuItemData.promo) {menuItemData.promo=DEFAULT_PROMO}
+
     if(menuItemData.sales){
-        //if(é dia de promo){
+    
 
-        menuItemData.promo=`<div class="promo">
-                                <img class="logo-promo" src="./images/award.svg"/>
-                                Promo Almoço
-                            </div>`;
-                            menuItemData.pricePromo=menuItemData.sales[0].price
+        if(isPromo(menuItemData)){
+            
+                menuItemData.promo=`<div class="promo">
+                                        <img class="logo-promo" src="./images/award.svg"/>
+                                        Promo Almoço
+                                    </div>`;
+                                    menuItemData.pricePromo=menuItemData.sales[0].price
                         
-                    //}
-                }else{
-                            menuItemData.pricePromo=DEFAULT_PROMO
-                            menuItemData.promo=""
-                        }
+        }else{
+            menuItemData.pricePromo=DEFAULT_PROMO
+            menuItemData.promo=""
+        }
 
+    }else{
+        menuItemData.pricePromo=DEFAULT_PROMO
+        menuItemData.promo=""
+    }
 
     item= ` <li class="menu-item" onclick="showModal(${index})">
                 <img class="prato-image" src="${menuItemData.image}">
@@ -467,8 +571,6 @@ function changeQuantity(operation){
 
 
 //chamadas//
-
-    
 
 
 renderPage()
