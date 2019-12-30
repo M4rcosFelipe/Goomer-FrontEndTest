@@ -144,6 +144,17 @@ function convertDias(lista){
 
 //funções de data
 
+
+
+
+
+//////////////////////////////////////////
+
+
+
+
+
+
 function isPromo(menuItemData){
 
     let response=""
@@ -172,7 +183,9 @@ function converteHora(stringHora){
 
 }
 
-function verificaDia(dias){
+function verificaDia(dias){//array com os dias
+
+
     //verifica se é DIA de promoção
 
     const today=new Date()
@@ -185,13 +198,13 @@ function verificaDia(dias){
     console.log(`Dia atual: ${diaAtual}`)
 
 
-    const isDay=dias.days.indexOf(diaAtual)
+    const isDay=dias.indexOf(diaAtual)
 
     return isDay!==-1?true:false
 }
 
 
-function verificaHora(horas){
+function verificaHora(horas){//elemento do array hours
 
     const from=converteHora(horas.from)
     const to=converteHora(horas.to)
@@ -224,7 +237,7 @@ function verificaPromo(salesData){//1 elemento do array de sales
     for(let i=0;i<salesData.hours.length;i++){
 
     //verifica se é Dia de promoção
-        isPromoDay=verificaDia(salesData.hours[i])
+        isPromoDay=verificaDia(salesData.hours[i].days)
 
     //verifica se é hora de promoção
         isPromoHour=verificaHora(salesData.hours[i])
@@ -236,7 +249,20 @@ function verificaPromo(salesData){//1 elemento do array de sales
     }
     return false
 }
-//
+
+
+
+
+/////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
 async function createMenu(){
     const cardapio=document.querySelector("#cardapio")
 
@@ -303,7 +329,7 @@ function createOptionsItem(data,index){
     if(!menuItemData.promo) {menuItemData.promo=DEFAULT_PROMO}
 
     if(menuItemData.sales){
-    
+   
 
         if(isPromo(menuItemData)){
             

@@ -148,6 +148,7 @@ function convertDias(lista) {
   return `${diasDaSemana[lista[0] - 1]} à ${diasDaSemana[lista[lista.length - 1] - 1]}`;
 } //criando menu
 //funções de data
+//////////////////////////////////////////
 
 
 function isPromo(menuItemData) {
@@ -179,17 +180,19 @@ function converteHora(stringHora) {
 }
 
 function verificaDia(dias) {
+  //array com os dias
   //verifica se é DIA de promoção
   const today = new Date(); //teste
   // today.setDate() 
 
   const diaAtual = today.getDay() + 1;
   console.log(`Dia atual: ${diaAtual}`);
-  const isDay = dias.days.indexOf(diaAtual);
+  const isDay = dias.indexOf(diaAtual);
   return isDay !== -1 ? true : false;
 }
 
 function verificaHora(horas) {
+  //elemento do array hours
   const from = converteHora(horas.from);
   const to = converteHora(horas.to);
   const now = new Date(); //teste
@@ -213,7 +216,7 @@ function verificaPromo(salesData) {
 
   for (let i = 0; i < salesData.hours.length; i++) {
     //verifica se é Dia de promoção
-    isPromoDay = verificaDia(salesData.hours[i]); //verifica se é hora de promoção
+    isPromoDay = verificaDia(salesData.hours[i].days); //verifica se é hora de promoção
 
     isPromoHour = verificaHora(salesData.hours[i]);
 
@@ -223,7 +226,7 @@ function verificaPromo(salesData) {
   }
 
   return false;
-} //
+} /////////////////////////////////////////////////////////////////////////
 
 
 function createMenu() {
