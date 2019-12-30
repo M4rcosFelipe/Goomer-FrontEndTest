@@ -84,8 +84,8 @@ function search(){
    
     if(palavra === toCleanString(listaRestaurantes[i].name)){
 
-      console.log("nome do restaurante ",listaRestaurantes[i].name)
-      console.log("nome do restaurante limpo= ",toCleanString(listaRestaurantes[i].name))
+      // console.log("nome do restaurante ",listaRestaurantes[i].name)
+      // console.log("nome do restaurante limpo= ",toCleanString(listaRestaurantes[i].name))
 
       findedRestaurants.push(listaRestaurantes[i])
     }

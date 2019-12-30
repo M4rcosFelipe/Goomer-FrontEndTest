@@ -70,13 +70,13 @@ const capitalize = (s) => {
 
 
 function retiraEspacos(string){
-newString=""
-for(let i=0;i<string.length;i++){
-    if(string[i]!==" "){
-    newString+=string[i]
+    let newString=""
+    for(let i=0;i<string.length;i++){
+        if(string[i]!==" "){
+        newString+=string[i]
+        }
     }
-}
-return newString
+    return newString
 }
 
 function toCleanString(string){
@@ -94,10 +94,11 @@ function toCleanString(string){
 
 async function createHeader(){
 
+
     const header=await getHeader()
     const pageHeader=document.querySelector(".restaurant-data")
 
-    
+    const horarios=createHorarioHeader(header)
     
     pageHeader.innerHTML=`<img class="restaurant--image"src="${header.image}">
 
@@ -105,14 +106,39 @@ async function createHeader(){
                 <h1 class="restaurant--name">${header.name}</h1>
                 <p class="restaurant-description">${header.address}</p>
                 
-                <div class="horarios">
-                    <p>Segunda à sexta: <span class="horario">11:30 às 15:00</span></p>
-                    <p>Sábados: <span class="horario">11:30 às 22:00</span></p>
-                    <p>Domingos e feriados :<span class="horario">11:30 às 15:00</span></p>
-                </div>
+                ${horarios}
 
             </div>` 
 }
+
+
+function createHorarioHeader(restaurante){
+    
+    var horariosContent="Aberto 24h"
+
+        if(restaurante.hours){
+           horariosContent=""
+
+            for(let j=0;j<restaurante.hours.length;j++){
+
+                horariosContent+=`<p>${convertDias(restaurante.hours[j].days)}: <span class="horario">${restaurante.hours[j].from} às ${restaurante.hours[j].to}</span></p>`
+
+            }
+
+        }
+
+    return ` 
+            <div class="horarios">
+                ${horariosContent}
+            </div>`
+
+}
+
+function convertDias(lista){
+    const diasDaSemana=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']
+    return `${diasDaSemana[lista[0]-1]} à ${diasDaSemana[lista[lista.length-1]-1]}`
+}
+
 
 //criando menu
 
@@ -124,8 +150,6 @@ async function createMenu(){
     await createMenuOptions()
 
 }
-
-
 
 
 
@@ -162,70 +186,76 @@ async function createMenuLabels(){
 async function createMenuOptions(){
     for(let i=0;i<groups.length;i++){
         const label=document.querySelector("."+toCleanString(groups[i]))
-        label.innerHTML=await createMenuOptionsItems(groups[i])
+        label.innerHTML=await createMenuOptionsContent(groups[i])
     }
 }
 
 
 
+function createOptionsItem(data,index){
+   
 
-async function createMenuOptionsItems(group){
+    let item=""
+
+
+    const menuItemData=data
+
+    if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}
+    if(!menuItemData.image) {menuItemData.image=DEFAULT_IMAGE}
+    if(!menuItemData.promo){menuItemData.promo=DEFAULT_PROMO}
+    if(menuItemData.sales){
+        //if(é dia de promo){
+
+        menuItemData.promo=`<div class="promo">
+                                <img class="logo-promo" src="./images/award.svg"/>
+                                Promo Almoço
+                            </div>`;
+                            menuItemData.pricePromo=menuItemData.sales[0].price
+                        
+                    //}
+                }else{
+                            menuItemData.pricePromo=DEFAULT_PROMO
+                            menuItemData.promo=""
+                        }
+
+
+    item= ` <li class="menu-item" onclick="showModal(${index})">
+                <img class="prato-image" src="${menuItemData.image}">
+                <div class="prato-wrapper">
+                    <div class="name-wrapper">                         
+                        <h1 class="prato-name">${menuItemData.name}</h1>
+                        ${menuItemData.promo}
+                        
+                    </div>  
+                    <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
+            
+                    <div class="preco">
+                        <p>R$${menuItemData.price.toFixed(2)}</p><strike>R$${menuItemData.pricePromo.toFixed(2)}</strike>
+                    </div>
+                </div>
+            </li>`
+
+    return item
+}
+
+
+
+
+async function createMenuOptionsContent(group){
 
     let optionsData=""
 
-    for(let j=0;j<menuData.length;j++){
+    for(let i=0;i<menuData.length;i++){
 
-        const menuItemData={}=menuData[j]
+        const menuItemData=menuData[i]
 
         if(toCleanString(menuItemData.group)===toCleanString(group)){
-
-
-
-            if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}
-            if(!menuItemData.image) {menuItemData.image=DEFAULT_IMAGE}
-            if(!menuItemData.promo){menuItemData.promo=DEFAULT_PROMO}
-            if(menuItemData.sales){
-                //if(é dia de promo){
-
-                menuItemData.promo=`<div class="promo">
-                                        <img class="logo-promo" src="./images/award.svg"/>
-                                        Promo Almoço
-                                    </div>`;
-                                    menuItemData.pricePromo=menuItemData.sales[0].price
-                                
-                            //}
-                        }else{
-                                    menuItemData.pricePromo=DEFAULT_PROMO
-                                    menuItemData.promo=""
-                                }
-                                console.log(menuItemData)
-
-
-            optionsData+= ` <li class="menu-item" onclick="showModal(${j})">
-                        <img class="prato-image" src="${menuItemData.image}">
-                        <div class="prato-wrapper">
-                            <div class="name-wrapper">                         
-                                <h1 class="prato-name">${menuItemData.name}</h1>
-                                ${menuItemData.promo}
-                               
-                            </div>  
-                            <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
-                    
-                            <div class="preco">
-                                <p>R$${menuItemData.price.toFixed(2)}</p><strike>R$${menuItemData.pricePromo.toFixed(2)}</strike>
-                            </div>
-                        </div>
-                    </li>`
+            optionsData+=createOptionsItem(menuItemData,i)
         }
     }
     return optionsData
 }
 
-
-/* <div class="promo">
-<img class="logo-promo" src="./images/award.svg"/>
-Promo Almoço
-</div> */
 
 
 //renderizando input
@@ -233,7 +263,7 @@ Promo Almoço
 function renderInputSearch(){
     const header=document.querySelector(".restaurant-data")
     const input=`<form class="form-search">
-    <label><span class="search-span">Buscar no Cardápio</span><input class="buscar-no-cardapio" type="text"/></label>
+    <label><span class="search-span">Buscar no Cardápio</span><input class="buscar-no-cardapio" type="text" onsubmit="buscar()"/></label>
 </form>
 <button id="search-button"></button>`
     header.insertAdjacentHTML("afterend",input)
@@ -261,24 +291,99 @@ async function renderPage(){
 //mecanismo de busca//
 
 function createSearchEvent(){
+    
+    const formSearch=document.querySelector(".form-search")
+
+    formSearch.addEventListener("submit",function(event){
+                event.preventDefault()
+                searchButton.click()
+        })
+
 
     const searchButton=document.querySelector("#search-button")
 
     searchButton.addEventListener("click",function(){
-        console.log("deu certo")
-    })
-
-    const inputCardapio=document.querySelector(".buscar-no-cardapio")
-
-
-    inputCardapio.addEventListener("keyup",function(event){
-        if(event.keyCode===13){
-            event.preventDefault()
-            searchButton.click()
-        }
+        buscarNoCardapio()
     })
     
 }
+
+
+function buscarNoCardapio(){
+
+    const palavra=toCleanString(document.querySelector(".buscar-no-cardapio").value)
+
+    if(!palavra) return
+    
+    const cardapio=document.querySelector("#cardapio")
+
+    if(!document.querySelector("#finded-container")){
+
+        findedContainerHTML=`<section id="finded-container">
+        
+        <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
+        <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
+        
+        <ul id="finded-list" class="options">
+        
+        </ul>
+    </section>`
+
+
+        cardapio.insertAdjacentHTML("beforebegin",findedContainerHTML)
+
+        createFecharFindedContainer()
+    }
+
+   
+    const totalFinded=document.querySelector(".total-finded-number")
+    const findedList=document.querySelector("#finded-list")
+
+
+    let findedPratos=[]
+
+    for(let i=0;i<menuData.length;i++){
+        if(palavra===toCleanString(menuData[i].name)){
+            findedPratos.push(menuData[i])
+        }
+    }
+
+
+    findedList.innerHTML=""
+
+    totalFinded.innerText=findedPratos.length
+
+    if(findedPratos.length!==0){
+        for(let i=0;i<findedPratos.length;i++){
+            findedList.innerHTML+=createOptionsItem(findedPratos[i],menuData.indexOf(findedPratos[i]))
+        }
+    }
+}
+
+
+
+
+function fechaFindedContainer(){
+    const findedContainer=document.querySelector("#finded-container")
+
+    findedContainer.remove()
+
+    document.querySelector(".buscar-no-cardapio").value=""
+}
+
+
+function createFecharFindedContainer(){
+
+
+    const fecharFindedButton=document.querySelector(".fechar-finded-container")
+
+    fecharFindedButton.onclick=fechaFindedContainer
+
+}
+
+
+
+
 
 // MODAL //
 
@@ -289,7 +394,6 @@ function showModal(index){
     const modal=createModal(modalData)
     const header=document.querySelector("header")
     header.insertAdjacentHTML("beforebegin",modal)
-
 }
 
 function createModal(data){
@@ -368,6 +472,8 @@ function changeQuantity(operation){
 
 
 renderPage()
+
+
 
 
 

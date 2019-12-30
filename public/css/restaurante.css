@@ -97,7 +97,7 @@ p{
 
 
 .form-search{
-    margin-top:16px;
+    margin-top:26px;
 }
 
 #cardapio{
@@ -176,19 +176,22 @@ p{
 .prato-image{
     width:115px;
     height:115px;
+    align-self: center;
 }
 
 .prato-name{
     margin:0px;
     padding:0px;
-    line-height:19px;
+    line-height:17px;
     font-size:16px;
+    text-align:left;
 
 }
 .prato-wrapper{
     display:grid;
     grid-template-rows:auto auto auto;
     padding:16px;
+
 
 }
 .name-wrapper{
@@ -225,6 +228,10 @@ p{
     color: #404040;
 }
 
+.preco{
+    display:flex;
+    align-items:baseline;
+}
 .preco p{
     font-weight: bold;
     line-height:19px;
@@ -438,4 +445,49 @@ aside{
         margin-top:5px;
     }
 }
+
+@media(max-width:460px){
+    .options{
+        grid-template-columns: repeat(auto-fill,100%);
+    }
+    .promo{
+        margin-top:5px;
+        margin-bottom:5px;
+    }
+    .name-wrapper{
+        flex-wrap:wrap;
+
+    }
+}
+
+
+
+
+#finded-container{
+    margin-top:26px;
+    display:grid;
+
+}
+
+.fechar-finded-container{
+    justify-self:end;
+    cursor:pointer;
+    justify-self:start;
+}
+
+.total-finded-text{
+    margin-top:10px;
+    color:#989898;
+}
+
+
+
+#finded-list li{
+    display:grid;
+    animation: mostrar .3s;
+} 
+
+
+
+
 
