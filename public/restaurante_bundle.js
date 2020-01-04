@@ -115,13 +115,13 @@ function _createHeader() {
     const horarios = createHorarioHeader(header);
     pageHeader.innerHTML = `<img class="restaurant--image"src="${header.image}">
 
-            <div class="wrapper">
-                <h1 class="restaurant--name">${header.name}</h1>
-                <p class="restaurant-description">${header.address}</p>
-                
-                ${horarios}
+                        <div class="wrapper">
+                            <h1 class="restaurant--name">${header.name}</h1>
+                            <p class="restaurant-description">${header.address}</p>
+                            
+                            ${horarios}
 
-            </div>`;
+                        </div>`;
   });
   return _createHeader.apply(this, arguments);
 }
@@ -133,17 +133,24 @@ function createHorarioHeader(restaurante) {
     horariosContent = "";
 
     for (let j = 0; j < restaurante.hours.length; j++) {
-      horariosContent += `<p>${convertDias(restaurante.hours[j].days)}: <span class="horario">${restaurante.hours[j].from} às ${restaurante.hours[j].to}</span></p>`;
+      console.log(converteHora(restaurante.hours[j].from), converteHora(restaurante.hours[j].to));
+
+      if (Number(converteHora(restaurante.hours[j].from)) > Number(converteHora(restaurante.hours[j].to))) {
+        restaurante.hours[j].days.push(restaurante.hours[j].days[restaurante.hours[j].days.length - 1] + 1);
+      }
+
+      const dias = converteDias(restaurante.hours[j].days);
+      horariosContent += `<p>${dias}: <span class="horario">${restaurante.hours[j].from} às ${restaurante.hours[j].to}</span></p>`;
     }
   }
 
   return ` 
-            <div class="horarios">
-                ${horariosContent}
-            </div>`;
+          <div class="horarios">
+              ${horariosContent}
+          </div>`;
 }
 
-function convertDias(lista) {
+function converteDias(lista) {
   const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
   return `${diasDaSemana[lista[0] - 1]} à ${diasDaSemana[lista[lista.length - 1] - 1]}`;
 } //criando menu
@@ -230,60 +237,39 @@ function verificaPromo(salesData) {
 
 
 function createMenu() {
-  return _createMenu.apply(this, arguments);
-}
-
-function _createMenu() {
-  _createMenu = _asyncToGenerator(function* () {
-    const cardapio = document.querySelector("#cardapio");
-    cardapio.innerHTML = yield createMenuLabels();
-    yield createMenuOptions();
-  });
-  return _createMenu.apply(this, arguments);
+  const cardapio = document.querySelector("#cardapio");
+  cardapio.innerHTML = createMenuLabels();
+  createMenuOptions();
 }
 
 function createMenuLabels() {
-  return _createMenuLabels.apply(this, arguments);
-}
-
-function _createMenuLabels() {
-  _createMenuLabels = _asyncToGenerator(function* () {
-    for (let i = 0; i < menuData.length; i++) {
-      if (groups.indexOf(capitalize(menuData[i].group)) === -1) {
-        groups.push(capitalize(menuData[i].group));
-      }
+  for (let i = 0; i < menuData.length; i++) {
+    if (groups.indexOf(capitalize(menuData[i].group)) === -1) {
+      groups.push(capitalize(menuData[i].group));
     }
+  }
 
-    let labels = "";
+  let labels = "";
 
-    for (let j = 0; j < groups.length; j++) {
-      labels += `<li class="cardapio-item "> 
-                    <label for="${toCleanString(groups[j])}-options" id="cardapio-label">${groups[j]}</label>
-                    <input type="checkbox" class="checkbox-input" id="${toCleanString(groups[j])}-options">
+  for (let j = 0; j < groups.length; j++) {
+    labels += `<li class="cardapio-item "> 
+                  <label for="${toCleanString(groups[j])}-options" id="cardapio-label">${groups[j]}</label>
+                  <input type="checkbox" class="checkbox-input" id="${toCleanString(groups[j])}-options">
 
-                    <ul class="options ${toCleanString(groups[j])}">
+                  <ul class="options ${toCleanString(groups[j])}">
 
-                    </ul>
-                </li>`;
-    }
+                  </ul>
+              </li>`;
+  }
 
-    return labels;
-  });
-  return _createMenuLabels.apply(this, arguments);
+  return labels;
 }
 
 function createMenuOptions() {
-  return _createMenuOptions.apply(this, arguments);
-}
-
-function _createMenuOptions() {
-  _createMenuOptions = _asyncToGenerator(function* () {
-    for (let i = 0; i < groups.length; i++) {
-      const label = document.querySelector("." + toCleanString(groups[i]));
-      label.innerHTML = yield createMenuOptionsContent(groups[i]);
-    }
-  });
-  return _createMenuOptions.apply(this, arguments);
+  for (let i = 0; i < groups.length; i++) {
+    const label = document.querySelector("." + toCleanString(groups[i]));
+    label.innerHTML = createMenuOptionsContent(groups[i]);
+  }
 }
 
 function createOptionsItem(data, index) {
@@ -305,65 +291,61 @@ function createOptionsItem(data, index) {
   if (menuItemData.sales) {
     if (isPromo(menuItemData)) {
       menuItemData.promo = `<div class="promo">
-                                        <img class="logo-promo" src="./images/award.svg"/>
-                                        Promo Almoço
-                                    </div>`;
+                              <img class="logo-promo" src="./images/award.svg"/>
+                              Promo Almoço
+                          </div>`;
       menuItemData.pricePromo = menuItemData.sales[0].price;
+      const priceAux = menuItemData.pricePromo;
+      menuItemData.pricePromo = `<strike>R$${menuItemData.price.toFixed(2)}</strike>`;
+      menuItemData.price = priceAux;
     } else {
-      menuItemData.pricePromo = DEFAULT_PROMO;
+      menuItemData.pricePromo = "";
       menuItemData.promo = "";
     }
   } else {
-    menuItemData.pricePromo = DEFAULT_PROMO;
+    menuItemData.pricePromo = "";
     menuItemData.promo = "";
   }
 
   item = ` <li class="menu-item" onclick="showModal(${index})">
-                <img class="prato-image" src="${menuItemData.image}">
-                <div class="prato-wrapper">
-                    <div class="name-wrapper">                         
-                        <h1 class="prato-name">${menuItemData.name}</h1>
-                        ${menuItemData.promo}
-                        
-                    </div>  
-                    <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
-            
-                    <div class="preco">
-                        <p>R$${menuItemData.price.toFixed(2)}</p><strike>R$${menuItemData.pricePromo.toFixed(2)}</strike>
-                    </div>
-                </div>
-            </li>`;
+              <img class="prato-image" src="${menuItemData.image}">
+              <div class="prato-wrapper">
+                  <div class="name-wrapper">                         
+                      <h1 class="prato-name">${menuItemData.name}</h1>
+                      ${menuItemData.promo}
+                      
+                  </div>  
+                  <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
+          
+                  <div class="preco">
+                      <p>R$${menuItemData.price.toFixed(2)}</p>${menuItemData.pricePromo}
+                  </div>
+              </div>
+          </li>`;
   return item;
 }
 
-function createMenuOptionsContent(_x) {
-  return _createMenuOptionsContent.apply(this, arguments);
+function createMenuOptionsContent(group) {
+  let optionsData = "";
+
+  for (let i = 0; i < menuData.length; i++) {
+    const menuItemData = menuData[i];
+
+    if (toCleanString(menuItemData.group) === toCleanString(group)) {
+      optionsData += createOptionsItem(menuItemData, i);
+    }
+  }
+
+  return optionsData;
 } //renderizando input
 
-
-function _createMenuOptionsContent() {
-  _createMenuOptionsContent = _asyncToGenerator(function* (group) {
-    let optionsData = "";
-
-    for (let i = 0; i < menuData.length; i++) {
-      const menuItemData = menuData[i];
-
-      if (toCleanString(menuItemData.group) === toCleanString(group)) {
-        optionsData += createOptionsItem(menuItemData, i);
-      }
-    }
-
-    return optionsData;
-  });
-  return _createMenuOptionsContent.apply(this, arguments);
-}
 
 function renderInputSearch() {
   const header = document.querySelector(".restaurant-data");
   const input = `<form class="form-search">
-    <label><span class="search-span">Buscar no Cardápio</span><input class="buscar-no-cardapio" type="text" onsubmit="buscar()"/></label>
-</form>
-<button id="search-button"></button>`;
+                  <label><span class="search-span">Buscar no Cardápio</span><input class="buscar-no-cardapio" type="text" onsubmit="buscar()"/></label>
+                </form>
+                <button id="search-button"></button>`;
   header.insertAdjacentHTML("afterend", input);
 } //renderiza pagina
 
@@ -375,10 +357,10 @@ function renderPage() {
 
 function _renderPage() {
   _renderPage = _asyncToGenerator(function* () {
-    yield setMenuData();
+    setMenuData();
     yield createHeader();
     renderInputSearch();
-    yield createMenu();
+    createMenu();
     document.querySelector("#loading").remove();
     createSearchEvent();
   });
@@ -404,14 +386,14 @@ function buscarNoCardapio() {
 
   if (!document.querySelector("#finded-container")) {
     findedContainerHTML = `<section id="finded-container">
-        
-        <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
-        <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
-        
-        <ul id="finded-list" class="options">
-        
-        </ul>
-    </section>`;
+      
+                              <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
+                              <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
+                              
+                              <ul id="finded-list" class="options">
+                              
+                              </ul>
+                            </section>`;
     cardapio.insertAdjacentHTML("beforebegin", findedContainerHTML);
     createFecharFindedContainer();
   }
@@ -457,29 +439,29 @@ function showModal(index) {
 
 function createModal(data) {
   return `<div class="modal-container">
-    <div class="modal-content">
-        <button class="fechar-modal" onclick="fechaModal()">
-            <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
-        </button>
-            <img id="modal-image" src="${data.image}">
+              <div class="modal-content">
+                  <button class="fechar-modal" onclick="fechaModal()">
+                      <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
+                  </button>
+                      <img id="modal-image" src="${data.image}">
 
-        <p class="modal-nome">${data.name}</p>
+                  <p class="modal-nome">${data.name}</p>
 
-        <div class="flex-text">
-            <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <p class="modal-preco">R$ ${data.price.toFixed(2)}</p>
-        </div>
+                  <div class="flex-text">
+                      <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                      <p class="modal-preco">R$ ${data.price.toFixed(2)}</p>
+                  </div>
 
-        <div class="actions">
-            <div class="botoes-quantidade">
-                <div class="botao menos" onclick=changeQuantity("menos")>&ndash;</div>
-                <input type="text"  id="quantidade" value="1">
-                <div class="botao mais" onclick=changeQuantity("mais")>+</div>
-            </div>
-            <div class="adicionar">Adicionar<span class="span-preco">R$ ${data.price.toFixed(2)}</span></div>
-        </div>
-    </div>
-</div>`;
+                  <div class="actions">
+                      <div class="botoes-quantidade">
+                          <div class="botao menos" onclick=changeQuantity("menos")>&ndash;</div>
+                          <input type="text"  id="quantidade" value="1">
+                          <div class="botao mais" onclick=changeQuantity("mais")>+</div>
+                      </div>
+                      <div class="adicionar">Adicionar<span class="span-preco">R$ ${data.price.toFixed(2)}</span></div>
+                  </div>
+              </div>
+      </div>`;
 }
 
 function fechaModal() {

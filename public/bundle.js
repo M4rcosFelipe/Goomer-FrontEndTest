@@ -32,7 +32,7 @@ function loadRestaurants() {
 
 function _loadRestaurants() {
   _loadRestaurants = _asyncToGenerator(function* () {
-    data = yield getRestaurants();
+    const data = yield getRestaurants();
     document.querySelector("#loading").remove();
     renderRestaurants(data);
   });
@@ -59,8 +59,8 @@ function verificaDia(dias) {
   const today = new Date(); //teste
   // today.setDate() 
 
-  const diaAtual = today.getDay() + 1;
-  console.log(`Dia atual: ${diaAtual}`);
+  const diaAtual = today.getDay() + 1; // console.log(`Dia atual: ${diaAtual}`)
+
   const isDay = dias.indexOf(diaAtual);
   return isDay !== -1 ? true : false;
 }
@@ -71,10 +71,9 @@ function verificaHora(horas) {
   const to = converteHora(horas.to);
   const now = new Date(); //teste
   // now.setHours()
-
-  console.log(`Hora atual: ${now.getHours()}`);
-  console.log(`from: ${from}`);
-  console.log(`to: ${to}`);
+  // console.log(`Hora atual: ${now.getHours()}`)
+  // console.log(`from: ${from}`)
+  // console.log(`to: ${to}`)
 
   if (now.getHours() >= from && now.getHours() <= to) {
     return true;
@@ -83,10 +82,10 @@ function verificaHora(horas) {
   }
 }
 
-function getStatus(restaurante) {
+function isOpen(restaurante) {
   for (let i = 0; i < restaurante.hours.length; i++) {
-    //verifica se é Dia de promoção
-    isOpenDay = verificaDia(restaurante.hours[i].days); //verifica se é hora de promoção
+    //verifica so dia
+    isOpenDay = verificaDia(restaurante.hours[i].days); //verifica a hora
 
     isOpenHour = verificaHora(restaurante.hours[i]);
 
@@ -98,26 +97,18 @@ function getStatus(restaurante) {
   return false;
 }
 
-function createRestaurantCard(_x) {
-  return _createRestaurantCard.apply(this, arguments);
-}
+function createRestaurantCard(restaurant) {
+  let status = "aberto";
+  let statusText = "Aberto agora";
 
-function _createRestaurantCard() {
-  _createRestaurantCard = _asyncToGenerator(function* (restaurant) {
-    let status = "fechado";
-    let statusText = "Fechado";
-
-    if (restaurant.hours) {
-      if (getStatus(restaurant) === false) {
-        status = "fechado";
-        statusText = "Fechado";
-      } else {
-        status = "aberto";
-        statusText = "Aberto agora";
-      }
+  if (restaurant.hours) {
+    if (isOpen(restaurant) === false) {
+      status = "fechado";
+      statusText = "Fechado";
     }
+  }
 
-    return `<a  href="restaurante.html?restaurante=${restaurant.id}" class="restaurant-status">
+  return `<a  href="restaurante.html?restaurante=${restaurant.id}" class="restaurant-status">
   <div class="status ${status}">${statusText}</div>
 
     <div class="restaurant">
@@ -126,23 +117,14 @@ function _createRestaurantCard() {
         <p class="restaurant-address">${restaurant.address}</p>
     </div>
   </a>`;
-  });
-  return _createRestaurantCard.apply(this, arguments);
 }
 
-function renderRestaurants(_x2) {
-  return _renderRestaurants.apply(this, arguments);
-}
+function renderRestaurants(data) {
+  restaurantSection.innerHTML = "";
 
-function _renderRestaurants() {
-  _renderRestaurants = _asyncToGenerator(function* (data) {
-    restaurantSection.innerHTML = "";
-
-    for (let i = 0; i < data.length; i++) {
-      restaurantSection.innerHTML += yield createRestaurantCard(data[i]);
-    }
-  });
-  return _renderRestaurants.apply(this, arguments);
+  for (let i = 0; i < data.length; i++) {
+    restaurantSection.innerHTML += createRestaurantCard(data[i]);
+  }
 }
 
 function toCleanString(string) {

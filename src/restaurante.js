@@ -10,81 +10,81 @@ const RESTAURANT_ID=getId()
 var menuData=""
 
 function getId(){
-    const id=location.search[location.search.indexOf("=")+1]
-    return id
+  const id=location.search[location.search.indexOf("=")+1]
+  return id
 }
 
 
 async function setMenuData(){
-    const resposta=await getMenu()
-    menuData=resposta
+  const resposta=await getMenu()
+  menuData=resposta
 
 }
 
 //funções de requisição
 
 async function getRestaurants(){
-    try{
-      const response=await fetch("https://challange.goomer.com.br/restaurants")
-      const data=await response.json()
-      listaRestaurantes=data
-      return data
-    }catch(error){
-      console.log("Fetch failed: ",error)
-    }
+  try{
+    const response=await fetch("https://challange.goomer.com.br/restaurants")
+    const data=await response.json()
+    listaRestaurantes=data
+    return data
+  }catch(error){
+    console.log("Fetch failed: ",error)
+  }
 }
 
 async function getMenu(){
 
-    const id=RESTAURANT_ID
+  const id=RESTAURANT_ID
 
-    const response=await fetch(`https://challange.goomer.com.br/restaurants/${id}/menu`)
-    const data=await response.json()
-    return data
+  const response=await fetch(`https://challange.goomer.com.br/restaurants/${id}/menu`)
+  const data=await response.json()
+  return data
     
 }
 
 
 async function getHeader(){
-    const restaurantes=await getRestaurants()
-    
-    const id=RESTAURANT_ID
+  const restaurantes=await getRestaurants()
+  
+  const id=RESTAURANT_ID
 
-    let restauranteData=""
+  let restauranteData=""
 
-    for(let i=0;i<restaurantes.length;i++){
+  for(let i=0;i<restaurantes.length;i++){
 
-        if(restaurantes[i].id==id){
-            restauranteData=restaurantes[i]
-            return restauranteData
-        }
+    if(restaurantes[i].id==id){
+      restauranteData=restaurantes[i]
+      return restauranteData
     }
+  }
 }
 
 //funções uteis
 
 const capitalize = (s) => {
-    if (typeof s !== 'string') return ''
-    return s.charAt(0).toUpperCase() + s.slice(1)
-  }
+  if (typeof s !== 'string') return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
 
 
 function retiraEspacos(string){
-    let newString=""
-    for(let i=0;i<string.length;i++){
-        if(string[i]!==" "){
-        newString+=string[i]
-        }
+  let newString=""
+  for(let i=0;i<string.length;i++){
+    if(string[i]!==" "){
+      newString+=string[i]
     }
-    return newString
+  }
+  return newString
 }
 
 function toCleanString(string){
 
-    return retiraEspacos(string)
-                      .toLowerCase()
-                      .normalize("NFD")
-                      .replace(/[\u0300-\u036f]/g,"")
+  return retiraEspacos(string)
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g,"")
                   
 }
 
@@ -95,48 +95,51 @@ function toCleanString(string){
 async function createHeader(){
 
 
-    const header=await getHeader()
-    const pageHeader=document.querySelector(".restaurant-data")
+  const header=await getHeader()
+  const pageHeader=document.querySelector(".restaurant-data")
 
-    const horarios=createHorarioHeader(header)
-    
-    pageHeader.innerHTML=`<img class="restaurant--image"src="${header.image}">
+  const horarios=createHorarioHeader(header)
+  
+  pageHeader.innerHTML=`<img class="restaurant--image"src="${header.image}">
 
-            <div class="wrapper">
-                <h1 class="restaurant--name">${header.name}</h1>
-                <p class="restaurant-description">${header.address}</p>
-                
-                ${horarios}
+                        <div class="wrapper">
+                            <h1 class="restaurant--name">${header.name}</h1>
+                            <p class="restaurant-description">${header.address}</p>
+                            
+                            ${horarios}
 
-            </div>` 
+                        </div>` 
 }
 
-
+    
 function createHorarioHeader(restaurante){
     
-    var horariosContent="Aberto 24h"
+  var horariosContent="Aberto 24h"
 
-        if(restaurante.hours){
-           horariosContent=""
+  if(restaurante.hours){
+    horariosContent=""
 
-            for(let j=0;j<restaurante.hours.length;j++){
+    for(let j=0;j<restaurante.hours.length;j++){
+      console.log(converteHora(restaurante.hours[j].from),converteHora(restaurante.hours[j].to))
 
-                horariosContent+=`<p>${convertDias(restaurante.hours[j].days)}: <span class="horario">${restaurante.hours[j].from} às ${restaurante.hours[j].to}</span></p>`
+      if(Number(converteHora(restaurante.hours[j].from))>Number(converteHora(restaurante.hours[j].to))){
+        restaurante.hours[j].days.push(restaurante.hours[j].days[restaurante.hours[j].days.length-1]+1)
+      }
+      const dias=converteDias(restaurante.hours[j].days)
+      horariosContent+=`<p>${dias}: <span class="horario">${restaurante.hours[j].from} às ${restaurante.hours[j].to}</span></p>`
+    }
+  }
 
-            }
-
-        }
-
-    return ` 
-            <div class="horarios">
-                ${horariosContent}
-            </div>`
+  return ` 
+          <div class="horarios">
+              ${horariosContent}
+          </div>`
 
 }
 
-function convertDias(lista){
-    const diasDaSemana=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']
-    return `${diasDaSemana[lista[0]-1]} à ${diasDaSemana[lista[lista.length-1]-1]}`
+function converteDias(lista){
+  const diasDaSemana=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']
+  return `${diasDaSemana[lista[0]-1]} à ${diasDaSemana[lista[lista.length-1]-1]}`
 }
 
 
@@ -151,79 +154,74 @@ function convertDias(lista){
 //////////////////////////////////////////
 
 
-
-
-
-
 function isPromo(menuItemData){
 
-    let response=""
+  let response=""
 
-    for(let j=0;j<menuItemData.sales.length;j++){
-        response=verificaPromo(menuItemData.sales[j])
+  for(let j=0;j<menuItemData.sales.length;j++){
+      response=verificaPromo(menuItemData.sales[j])
 
-        if(response){
-            break
-        }
-    }
-    return response
+      if(response){
+          break
+      }
+  }
+  return response
 }
 
 
 function converteHora(stringHora){
-    let hora=""
-    for(let i=0;i<2;i++){
-       hora+=stringHora[i]
-    }
+  let hora=""
+  for(let i=0;i<2;i++){
+      hora+=stringHora[i]
+  }
 
-    if(hora[0]==="0"){
-        hora=hora[1]
-    }
-    return hora
-
+  if(hora[0]==="0"){
+      hora=hora[1]
+  }
+  return hora
 }
 
 function verificaDia(dias){//array com os dias
 
 
-    //verifica se é DIA de promoção
+  //verifica se é DIA de promoção
 
-    const today=new Date()
+  const today=new Date()
 
-         //teste
-    // today.setDate() 
+        //teste
+  // today.setDate() 
 
-    const diaAtual=today.getDay()+1
+  const diaAtual=today.getDay()+1
 
-    console.log(`Dia atual: ${diaAtual}`)
+  console.log(`Dia atual: ${diaAtual}`)
 
 
-    const isDay=dias.indexOf(diaAtual)
+  const isDay=dias.indexOf(diaAtual)
 
-    return isDay!==-1?true:false
+  return isDay!==-1?true:false
 }
 
 
 function verificaHora(horas){//elemento do array hours
 
-    const from=converteHora(horas.from)
-    const to=converteHora(horas.to)
+  const from=converteHora(horas.from)
+  const to=converteHora(horas.to)
 
-    const now=new Date()
-        //teste
-    // now.setHours()
+  const now=new Date()
+      //teste
+  // now.setHours()
 
-    console.log(`Hora atual: ${now.getHours()}`)
-    console.log(`from: ${from}`)
-    console.log(`to: ${to}`)
+  console.log(`Hora atual: ${now.getHours()}`)
+  console.log(`from: ${from}`)
+  console.log(`to: ${to}`)
 
-    if(now.getHours()>=from && now.getHours()<=to){
+  if(now.getHours()>=from && now.getHours()<=to){
 
-        return true
-    }else{
+      return true
+  }else{
 
-        return false
-    }
+      return false
+  }
 
 }
 
@@ -231,159 +229,152 @@ function verificaHora(horas){//elemento do array hours
 
 function verificaPromo(salesData){//1 elemento do array de sales
 
-    let isPromoHour
-    let isPromoDay
+  let isPromoHour
+  let isPromoDay
 
-    for(let i=0;i<salesData.hours.length;i++){
+  for(let i=0;i<salesData.hours.length;i++){
 
-    //verifica se é Dia de promoção
-        isPromoDay=verificaDia(salesData.hours[i].days)
+  //verifica se é Dia de promoção
+      isPromoDay=verificaDia(salesData.hours[i].days)
 
-    //verifica se é hora de promoção
-        isPromoHour=verificaHora(salesData.hours[i])
+  //verifica se é hora de promoção
+      isPromoHour=verificaHora(salesData.hours[i])
 
-        if(isPromoHour && isPromoDay){
-            return true
-        }
+      if(isPromoHour && isPromoDay){
+          return true
+      }
 
-    }
-    return false
+  }
+  return false
 }
-
-
 
 
 /////////////////////////////////////////////////////////////////////////
 
 
 
+ function createMenu(){
+  const cardapio=document.querySelector("#cardapio")
 
+  cardapio.innerHTML=createMenuLabels()
 
-
-
-
-
-async function createMenu(){
-    const cardapio=document.querySelector("#cardapio")
-
-    cardapio.innerHTML=await createMenuLabels()
-
-    await createMenuOptions()
+  createMenuOptions()
 
 }
 
 
 
-async function createMenuLabels(){
+function createMenuLabels(){
 
 
-    for(let i=0;i<menuData.length;i++){
-        if(groups.indexOf(capitalize(menuData[i].group))===-1){
-            groups.push(capitalize(menuData[i].group))
-        }
+  for(let i=0;i<menuData.length;i++){
+    if(groups.indexOf(capitalize(menuData[i].group))===-1){
+      groups.push(capitalize(menuData[i].group))
     }
+  }
 
-    let labels=""
+  let labels=""
 
-    for(let j=0;j<groups.length;j++){
+  for(let j=0;j<groups.length;j++){
 
-      labels+= `<li class="cardapio-item "> 
-                    <label for="${toCleanString(groups[j])}-options" id="cardapio-label">${groups[j]}</label>
-                    <input type="checkbox" class="checkbox-input" id="${toCleanString(groups[j])}-options">
+    labels+= `<li class="cardapio-item "> 
+                  <label for="${toCleanString(groups[j])}-options" id="cardapio-label">${groups[j]}</label>
+                  <input type="checkbox" class="checkbox-input" id="${toCleanString(groups[j])}-options">
 
-                    <ul class="options ${toCleanString(groups[j])}">
+                  <ul class="options ${toCleanString(groups[j])}">
 
-                    </ul>
-                </li>`
+                  </ul>
+              </li>`
 
-    }
+  }
 
-    return labels
+  return labels
 
 }
 
 
 
-async function createMenuOptions(){
-    for(let i=0;i<groups.length;i++){
-        const label=document.querySelector("."+toCleanString(groups[i]))
-        label.innerHTML=await createMenuOptionsContent(groups[i])
-    }
+function createMenuOptions(){
+  for(let i=0;i<groups.length;i++){
+    const label=document.querySelector("."+toCleanString(groups[i]))
+    label.innerHTML=createMenuOptionsContent(groups[i])
+  }
 }
 
 
 
 function createOptionsItem(data,index){
    
+  let item=""
 
-    let item=""
+  const menuItemData=data
 
+  if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}
+  if(!menuItemData.image) {menuItemData.image=DEFAULT_IMAGE}
+  if(!menuItemData.promo) {menuItemData.promo=DEFAULT_PROMO}
 
-    const menuItemData=data
-    
-    
-    
+  if(menuItemData.sales){
+  
+    if(isPromo(menuItemData)){
+        
+      menuItemData.promo=`<div class="promo">
+                              <img class="logo-promo" src="./images/award.svg"/>
+                              Promo Almoço
+                          </div>`;
+                          
+      menuItemData.pricePromo=menuItemData.sales[0].price  
 
-    if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}
-    if(!menuItemData.image) {menuItemData.image=DEFAULT_IMAGE}
-    if(!menuItemData.promo) {menuItemData.promo=DEFAULT_PROMO}
-
-    if(menuItemData.sales){
-   
-
-        if(isPromo(menuItemData)){
-            
-                menuItemData.promo=`<div class="promo">
-                                        <img class="logo-promo" src="./images/award.svg"/>
-                                        Promo Almoço
-                                    </div>`;
-                                    menuItemData.pricePromo=menuItemData.sales[0].price
-                        
-        }else{
-            menuItemData.pricePromo=DEFAULT_PROMO
-            menuItemData.promo=""
-        }
+      const priceAux=menuItemData.pricePromo 
+      
+      menuItemData.pricePromo=`<strike>R$${menuItemData.price.toFixed(2)}</strike>`
+      
+      menuItemData.price=priceAux 
 
     }else{
-        menuItemData.pricePromo=DEFAULT_PROMO
-        menuItemData.promo=""
+      menuItemData.pricePromo=""
+      menuItemData.promo=""
     }
 
-    item= ` <li class="menu-item" onclick="showModal(${index})">
-                <img class="prato-image" src="${menuItemData.image}">
-                <div class="prato-wrapper">
-                    <div class="name-wrapper">                         
-                        <h1 class="prato-name">${menuItemData.name}</h1>
-                        ${menuItemData.promo}
-                        
-                    </div>  
-                    <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
-            
-                    <div class="preco">
-                        <p>R$${menuItemData.price.toFixed(2)}</p><strike>R$${menuItemData.pricePromo.toFixed(2)}</strike>
-                    </div>
-                </div>
-            </li>`
+  }else{
+    menuItemData.pricePromo=""
+    menuItemData.promo=""
+  }
 
-    return item
+  item= ` <li class="menu-item" onclick="showModal(${index})">
+              <img class="prato-image" src="${menuItemData.image}">
+              <div class="prato-wrapper">
+                  <div class="name-wrapper">                         
+                      <h1 class="prato-name">${menuItemData.name}</h1>
+                      ${menuItemData.promo}
+                      
+                  </div>  
+                  <p class="prato-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
+          
+                  <div class="preco">
+                      <p>R$${menuItemData.price.toFixed(2)}</p>${menuItemData.pricePromo}
+                  </div>
+              </div>
+          </li>`
+
+  return item
 }
 
 
 
 
-async function createMenuOptionsContent(group){
+function createMenuOptionsContent(group){
 
-    let optionsData=""
+  let optionsData=""
 
-    for(let i=0;i<menuData.length;i++){
+  for(let i=0;i<menuData.length;i++){
 
-        const menuItemData=menuData[i]
+    const menuItemData=menuData[i]
 
-        if(toCleanString(menuItemData.group)===toCleanString(group)){
-            optionsData+=createOptionsItem(menuItemData,i)
-        }
+    if(toCleanString(menuItemData.group)===toCleanString(group)){
+      optionsData+=createOptionsItem(menuItemData,i)
     }
-    return optionsData
+  }
+  return optionsData
 }
 
 
@@ -391,29 +382,28 @@ async function createMenuOptionsContent(group){
 //renderizando input
 
 function renderInputSearch(){
-    const header=document.querySelector(".restaurant-data")
-    const input=`<form class="form-search">
-    <label><span class="search-span">Buscar no Cardápio</span><input class="buscar-no-cardapio" type="text" onsubmit="buscar()"/></label>
-</form>
-<button id="search-button"></button>`
-    header.insertAdjacentHTML("afterend",input)
+  const header=document.querySelector(".restaurant-data")
+  const input=`<form class="form-search">
+                  <label><span class="search-span">Buscar no Cardápio</span><input class="buscar-no-cardapio" type="text" onsubmit="buscar()"/></label>
+                </form>
+                <button id="search-button"></button>`
+  header.insertAdjacentHTML("afterend",input)
 }
 
 //renderiza pagina
 
 async function renderPage(){
 
-    await setMenuData()
+  setMenuData()
 
-    await createHeader()
+  await createHeader()
 
-    renderInputSearch()
+  renderInputSearch()
 
-    await createMenu()
+  createMenu()
+  document.querySelector("#loading").remove()
 
-    document.querySelector("#loading").remove()
-
-    createSearchEvent()
+  createSearchEvent()
 
 }
 
@@ -422,19 +412,19 @@ async function renderPage(){
 
 function createSearchEvent(){
     
-    const formSearch=document.querySelector(".form-search")
+  const formSearch=document.querySelector(".form-search")
 
-    formSearch.addEventListener("submit",function(event){
-                event.preventDefault()
-                searchButton.click()
-        })
+  formSearch.addEventListener("submit",function(event){
+    event.preventDefault()
+    searchButton.click()
+  })
 
 
-    const searchButton=document.querySelector("#search-button")
+  const searchButton=document.querySelector("#search-button")
 
-    searchButton.addEventListener("click",function(){
-        buscarNoCardapio()
-    })
+  searchButton.addEventListener("click",function(){
+    buscarNoCardapio()
+  })
     
 }
 
@@ -449,20 +439,20 @@ function buscarNoCardapio(){
 
     if(!document.querySelector("#finded-container")){
 
-        findedContainerHTML=`<section id="finded-container">
-        
-        <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
-        <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
-        
-        <ul id="finded-list" class="options">
-        
-        </ul>
-    </section>`
+      findedContainerHTML=`<section id="finded-container">
+      
+                              <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
+                              <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
+                              
+                              <ul id="finded-list" class="options">
+                              
+                              </ul>
+                            </section>`
 
 
-        cardapio.insertAdjacentHTML("beforebegin",findedContainerHTML)
+      cardapio.insertAdjacentHTML("beforebegin",findedContainerHTML)
 
-        createFecharFindedContainer()
+      createFecharFindedContainer()
     }
 
    
@@ -473,9 +463,9 @@ function buscarNoCardapio(){
     let findedPratos=[]
 
     for(let i=0;i<menuData.length;i++){
-        if(palavra===toCleanString(menuData[i].name)){
-            findedPratos.push(menuData[i])
-        }
+      if(palavra===toCleanString(menuData[i].name)){
+        findedPratos.push(menuData[i])
+      }
     }
 
 
@@ -484,9 +474,9 @@ function buscarNoCardapio(){
     totalFinded.innerText=findedPratos.length
 
     if(findedPratos.length!==0){
-        for(let i=0;i<findedPratos.length;i++){
-            findedList.innerHTML+=createOptionsItem(findedPratos[i],menuData.indexOf(findedPratos[i]))
-        }
+      for(let i=0;i<findedPratos.length;i++){
+        findedList.innerHTML+=createOptionsItem(findedPratos[i],menuData.indexOf(findedPratos[i]))
+      }
     }
 }
 
@@ -494,25 +484,21 @@ function buscarNoCardapio(){
 
 
 function fechaFindedContainer(){
-    const findedContainer=document.querySelector("#finded-container")
+  const findedContainer=document.querySelector("#finded-container")
 
-    findedContainer.remove()
+  findedContainer.remove()
 
-    document.querySelector(".buscar-no-cardapio").value=""
+  document.querySelector(".buscar-no-cardapio").value=""
 }
 
 
 function createFecharFindedContainer(){
 
+  const fecharFindedButton=document.querySelector(".fechar-finded-container")
 
-    const fecharFindedButton=document.querySelector(".fechar-finded-container")
-
-    fecharFindedButton.onclick=fechaFindedContainer
+  fecharFindedButton.onclick=fechaFindedContainer
 
 }
-
-
-
 
 
 // MODAL //
@@ -520,78 +506,75 @@ function createFecharFindedContainer(){
 
 function showModal(index){
     
-    const modalData=menuData[index]
-    const modal=createModal(modalData)
-    const header=document.querySelector("header")
-    header.insertAdjacentHTML("beforebegin",modal)
+  const modalData=menuData[index]
+  const modal=createModal(modalData)
+  const header=document.querySelector("header")
+  header.insertAdjacentHTML("beforebegin",modal)
 }
 
 function createModal(data){
 
-    return `<div class="modal-container">
-    <div class="modal-content">
-        <button class="fechar-modal" onclick="fechaModal()">
-            <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
-        </button>
-            <img id="modal-image" src="${data.image}">
+  return `<div class="modal-container">
+              <div class="modal-content">
+                  <button class="fechar-modal" onclick="fechaModal()">
+                      <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
+                  </button>
+                      <img id="modal-image" src="${data.image}">
 
-        <p class="modal-nome">${data.name}</p>
+                  <p class="modal-nome">${data.name}</p>
 
-        <div class="flex-text">
-            <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <p class="modal-preco">R$ ${data.price.toFixed(2)}</p>
-        </div>
+                  <div class="flex-text">
+                      <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                      <p class="modal-preco">R$ ${data.price.toFixed(2)}</p>
+                  </div>
 
-        <div class="actions">
-            <div class="botoes-quantidade">
-                <div class="botao menos" onclick=changeQuantity("menos")>&ndash;</div>
-                <input type="text"  id="quantidade" value="1">
-                <div class="botao mais" onclick=changeQuantity("mais")>+</div>
-            </div>
-            <div class="adicionar">Adicionar<span class="span-preco">R$ ${data.price.toFixed(2)}</span></div>
-        </div>
-    </div>
-</div>`
+                  <div class="actions">
+                      <div class="botoes-quantidade">
+                          <div class="botao menos" onclick=changeQuantity("menos")>&ndash;</div>
+                          <input type="text"  id="quantidade" value="1">
+                          <div class="botao mais" onclick=changeQuantity("mais")>+</div>
+                      </div>
+                      <div class="adicionar">Adicionar<span class="span-preco">R$ ${data.price.toFixed(2)}</span></div>
+                  </div>
+              </div>
+      </div>`
 }
 
 
 function fechaModal(){
-    const modal=document.querySelector(".modal-container")
-    modal.remove()
+  const modal=document.querySelector(".modal-container")
+  modal.remove()
 }
 
 
 
 
 function changeQuantity(operation){
-    const inputQuantidade=document.querySelector("#quantidade")
-    const itemPreco=document.querySelector(".modal-preco")
-    const spanPreco=document.querySelector(".span-preco")
+  const inputQuantidade=document.querySelector("#quantidade")
+  const itemPreco=document.querySelector(".modal-preco")
+  const spanPreco=document.querySelector(".span-preco")
 
 
-    if(operation==="menos"){
-        if(Number(inputQuantidade.value)-1<1) return
+  if(operation==="menos"){
+    if(Number(inputQuantidade.value)-1<1) return
+    inputQuantidade.value--
+  }else{
+    if(Number(inputQuantidade.value)+1>9999) return
+    inputQuantidade.value++
+  }
 
-        inputQuantidade.value--
-    }else{
-        if(Number(inputQuantidade.value)+1>9999) return
+  const valor=itemPreco.innerText
 
-        inputQuantidade.value++
+  let valorPreco=""
+
+  for(let i=0;i<valor.length;i++){
+    if(valor[i]!=="R" && valor[i]!=="$" && valor[i]!==" "){
+        valorPreco+=valor[i]
     }
+  }
+  valorPreco=Number(valorPreco)
 
-    const valor=itemPreco.innerText
-
-    let valorPreco=""
-
-    for(let i=0;i<valor.length;i++){
-        if(valor[i]!=="R" && valor[i]!=="$" && valor[i]!==" "){
-            valorPreco+=valor[i]
-        }
-    }
-    valorPreco=Number(valorPreco)
-
-
-    spanPreco.innerText="R$ "+(inputQuantidade.value*valorPreco).toFixed(2)
+  spanPreco.innerText="R$ "+(inputQuantidade.value*valorPreco).toFixed(2)
 
 }
 

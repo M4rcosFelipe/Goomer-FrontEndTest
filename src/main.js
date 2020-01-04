@@ -18,7 +18,7 @@ async function getRestaurants(){
 
 async function loadRestaurants(){
   
-  data=await getRestaurants()
+  const data=await getRestaurants()
   document.querySelector("#loading").remove()
   renderRestaurants(data)
 }
@@ -53,7 +53,7 @@ function verificaDia(dias){//array com os dias
 
   const diaAtual=today.getDay()+1
 
-  console.log(`Dia atual: ${diaAtual}`)
+  // console.log(`Dia atual: ${diaAtual}`)
 
 
   const isDay=dias.indexOf(diaAtual)
@@ -71,9 +71,9 @@ function verificaHora(horas){//elemento do array hours
       //teste
   // now.setHours()
 
-  console.log(`Hora atual: ${now.getHours()}`)
-  console.log(`from: ${from}`)
-  console.log(`to: ${to}`)
+  // console.log(`Hora atual: ${now.getHours()}`)
+  // console.log(`from: ${from}`)
+  // console.log(`to: ${to}`)
 
   if(now.getHours()>=from && now.getHours()<=to){
 
@@ -86,14 +86,14 @@ function verificaHora(horas){//elemento do array hours
 }
 
 
-function getStatus(restaurante){
+function isOpen(restaurante){
 
   for(let i=0;i<restaurante.hours.length;i++){
 
-    //verifica se é Dia de promoção
+    //verifica so dia
         isOpenDay=verificaDia(restaurante.hours[i].days)
 
-    //verifica se é hora de promoção
+    //verifica a hora
         isOpenHour=verificaHora(restaurante.hours[i])
 
         if(isOpenHour && isOpenDay){
@@ -105,20 +105,15 @@ function getStatus(restaurante){
 }
 
 
-async function createRestaurantCard(restaurant){
-
-  let status="fechado"
-  let statusText="Fechado"
+function createRestaurantCard(restaurant){
+  let status="aberto"
+  let statusText="Aberto agora"
 
   if(restaurant.hours){
 
-    if(getStatus(restaurant)===false){
+    if(isOpen(restaurant)===false){
       status="fechado"
       statusText="Fechado"
-
-    }else{
-      status="aberto"
-      statusText="Aberto agora"
     }
   }
 
@@ -135,15 +130,13 @@ async function createRestaurantCard(restaurant){
 }
 
 
-async function renderRestaurants(data){
+ function renderRestaurants(data){
 
   restaurantSection.innerHTML=""
 
-
   for(let i=0;i<data.length;i++){
-    restaurantSection.innerHTML+=await createRestaurantCard(data[i])
+    restaurantSection.innerHTML+=createRestaurantCard(data[i])
   }
-  
 }
 
 
