@@ -101,13 +101,11 @@ async function createHeader(){
   const horarios=createHorarioHeader(header)
   
   pageHeader.innerHTML=`<img class="restaurant--image"src="${header.image}">
-
                         <div class="wrapper">
                             <h1 class="restaurant--name">${header.name}</h1>
                             <p class="restaurant-description">${header.address}</p>
                             
                             ${horarios}
-
                         </div>` 
 }
 
@@ -215,7 +213,7 @@ function verificaHora(horas){//elemento do array hours
   console.log(`from: ${from}`)
   console.log(`to: ${to}`)
 
-  if(now.getHours()>=from && now.getHours()<=to){
+  if(now.getHours()>=from && now.getHours()<to){
 
       return true
   }else{
@@ -280,9 +278,7 @@ function createMenuLabels(){
     labels+= `<li class="cardapio-item "> 
                   <label for="${toCleanString(groups[j])}-options" id="cardapio-label">${groups[j]}</label>
                   <input type="checkbox" class="checkbox-input" id="${toCleanString(groups[j])}-options">
-
                   <ul class="options ${toCleanString(groups[j])}">
-
                   </ul>
               </li>`
 
@@ -322,7 +318,7 @@ function createOptionsItem(data,index){
                               Promo Almoço
                           </div>`;
                           
-      menuItemData.pricePromo=menuItemData.sales[0].price  
+      menuItemData.pricePromo=menuItemData.sales[0].price
 
       const priceAux=menuItemData.pricePromo 
       
@@ -359,8 +355,34 @@ function createOptionsItem(data,index){
   return item
 }
 
+function verifyPromo(){
 
+  const items=document.querySelectorAll(".menu-item")
 
+  for(let i=0;i<menuData.length;i++){
+
+    if(!menuData[i].sales) continue
+
+    if(isPromo(menuData[i])){
+
+      if(!items[i].children[1].children[0].querySelector(".promo")){
+        items[i].children[1].children[0].innerHTML+=`<div class="promo">
+                                                        <img class="logo-promo" src="./images/award.svg"/>
+                                                        Promo Almoço
+                                                    </div>`
+        items[i].children[1].children[2].innerHTML=`<p>R$${menuData[i].sales[0].price.toFixed(2)}</p><strike>R$${menuData[i].price.toFixed(2)}</strike>`
+      }
+
+    }else{
+
+      if(items[i].children[1].children[0].querySelector(".promo")){
+        items[i].children[1].children[0].querySelector(".promo").remove()
+        items[i].children[1].children[2].innerHTML=`<p>R$${menuData[i].price.toFixed(2)}</p>`
+      }
+
+    }
+  }
+}
 
 function createMenuOptionsContent(group){
 
@@ -404,6 +426,8 @@ async function renderPage(){
   document.querySelector("#loading").remove()
 
   createSearchEvent()
+
+  setInterval(()=>verifyPromo(),100)
 
 }
 
@@ -520,14 +544,11 @@ function createModal(data){
                       <img class="icon-fechar"src="images/close_icon-icons.com_50420.png">
                   </button>
                       <img id="modal-image" src="${data.image}">
-
                   <p class="modal-nome">${data.name}</p>
-
                   <div class="flex-text">
                       <p class="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                       <p class="modal-preco">R$ ${data.price.toFixed(2)}</p>
                   </div>
-
                   <div class="actions">
                       <div class="botoes-quantidade">
                           <div class="botao menos" onclick=changeQuantity("menos")>&ndash;</div>
@@ -583,14 +604,3 @@ function changeQuantity(operation){
 
 
 renderPage()
-
-
-
-
-
-
-
-
-
-
-

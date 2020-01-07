@@ -21,6 +21,7 @@ async function loadRestaurants(){
   const data=await getRestaurants()
   document.querySelector("#loading").remove()
   renderRestaurants(data)
+  setInterval(()=>verifyStatus(),100)
 }
 
 
@@ -127,6 +128,38 @@ function createRestaurantCard(restaurant){
     </div>
   </a>`
 
+}
+
+function trocaClasse(elemento, antiga, nova) {
+  elemento.classList.remove(antiga);
+  elemento.classList.add(nova);
+}
+
+function verifyStatus(){
+
+  const restaurantes=document.querySelectorAll(".restaurant-status")
+  // console.log(restaurantes)
+
+  for(let i=0;i<listaRestaurantes.length;i++){
+
+    const restaurant=listaRestaurantes[i]
+
+    if(restaurant.hours){
+
+      if(isOpen(restaurant)===false){
+
+        if(!restaurantes[i].children[0].classList.contains("fechado")){
+          trocaClasse(restaurantes[i].children[0],"aberto","fechado")
+          restaurantes[i].children[0].innerText="Fechado"
+        }
+      }else{
+        if(!restaurantes[i].children[0].classList.contains("aberto")){
+          trocaClasse(restaurantes[i].children[0],"fechado","aberto")
+          restaurantes[i].children[0].innerText="Aberto agora"
+        }      
+      }
+    }
+  }
 }
 
 
