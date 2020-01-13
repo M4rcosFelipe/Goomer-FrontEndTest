@@ -162,7 +162,6 @@ function verifyStatus(){
   }
 }
 
-
  function renderRestaurants(data){
 
   restaurantSection.innerHTML=""
@@ -171,9 +170,6 @@ function verifyStatus(){
     restaurantSection.innerHTML+=createRestaurantCard(data[i])
   }
 }
-
-
-
 
 function toCleanString(string){
 
@@ -184,7 +180,6 @@ function toCleanString(string){
                 
 }
 
-
 function retiraEspacos(string){
   newString=""
   for(let i=0;i<string.length;i++){
@@ -194,7 +189,6 @@ function retiraEspacos(string){
   }
   return newString
 }
-
 
 function search(){
 
@@ -224,7 +218,6 @@ function search(){
   }
 }
 
-
 function putLoading(){
   
   restaurantSection.innerHTML=""
@@ -248,7 +241,6 @@ function putErrorElement(){
 
   restaurantSection.insertAdjacentHTML('afterbegin',errorElement)
 }
-
 
 
 inputSearch.addEventListener("keyup",function(event){

@@ -251,19 +251,18 @@ function verificaPromo(salesData){//1 elemento do array de sales
 
 
 
- function createMenu(){
+ async function createMenu(){
   const cardapio=document.querySelector("#cardapio")
 
-  cardapio.innerHTML=createMenuLabels()
+  cardapio.innerHTML=await createMenuLabels()
 
-  createMenuOptions()
+  await createMenuOptions()
 
 }
 
 
 
-function createMenuLabels(){
-
+async function createMenuLabels(){
 
   for(let i=0;i<menuData.length;i++){
     if(groups.indexOf(capitalize(menuData[i].group))===-1){
@@ -290,16 +289,16 @@ function createMenuLabels(){
 
 
 
-function createMenuOptions(){
+async function createMenuOptions(){
   for(let i=0;i<groups.length;i++){
     const label=document.querySelector("."+toCleanString(groups[i]))
-    label.innerHTML=createMenuOptionsContent(groups[i])
+    label.innerHTML=await createMenuOptionsContent(groups[i])
   }
 }
 
 
 
-function createOptionsItem(data,index){
+async function createOptionsItem(data,index){
    
   let item=""
 
@@ -384,7 +383,7 @@ function verifyPromo(){
   }
 }
 
-function createMenuOptionsContent(group){
+async function createMenuOptionsContent(group){
 
   let optionsData=""
 
@@ -393,7 +392,7 @@ function createMenuOptionsContent(group){
     const menuItemData=menuData[i]
 
     if(toCleanString(menuItemData.group)===toCleanString(group)){
-      optionsData+=createOptionsItem(menuItemData,i)
+      optionsData+=await createOptionsItem(menuItemData,i)
     }
   }
   return optionsData
@@ -416,13 +415,14 @@ function renderInputSearch(){
 
 async function renderPage(){
 
-  setMenuData()
+  await setMenuData()
 
   await createHeader()
 
   renderInputSearch()
 
-  createMenu()
+  await createMenu()
+
   document.querySelector("#loading").remove()
 
   createSearchEvent()

@@ -235,75 +235,101 @@ function verificaPromo(salesData) {
 
 
 function createMenu() {
-  const cardapio = document.querySelector("#cardapio");
-  cardapio.innerHTML = createMenuLabels();
-  createMenuOptions();
+  return _createMenu.apply(this, arguments);
+}
+
+function _createMenu() {
+  _createMenu = _asyncToGenerator(function* () {
+    const cardapio = document.querySelector("#cardapio");
+    cardapio.innerHTML = yield createMenuLabels();
+    yield createMenuOptions();
+  });
+  return _createMenu.apply(this, arguments);
 }
 
 function createMenuLabels() {
-  for (let i = 0; i < menuData.length; i++) {
-    if (groups.indexOf(capitalize(menuData[i].group)) === -1) {
-      groups.push(capitalize(menuData[i].group));
+  return _createMenuLabels.apply(this, arguments);
+}
+
+function _createMenuLabels() {
+  _createMenuLabels = _asyncToGenerator(function* () {
+    for (let i = 0; i < menuData.length; i++) {
+      if (groups.indexOf(capitalize(menuData[i].group)) === -1) {
+        groups.push(capitalize(menuData[i].group));
+      }
     }
-  }
 
-  let labels = "";
+    let labels = "";
 
-  for (let j = 0; j < groups.length; j++) {
-    labels += `<li class="cardapio-item "> 
+    for (let j = 0; j < groups.length; j++) {
+      labels += `<li class="cardapio-item "> 
                   <label for="${toCleanString(groups[j])}-options" id="cardapio-label">${groups[j]}</label>
                   <input type="checkbox" class="checkbox-input" id="${toCleanString(groups[j])}-options">
                   <ul class="options ${toCleanString(groups[j])}">
                   </ul>
               </li>`;
-  }
+    }
 
-  return labels;
+    return labels;
+  });
+  return _createMenuLabels.apply(this, arguments);
 }
 
 function createMenuOptions() {
-  for (let i = 0; i < groups.length; i++) {
-    const label = document.querySelector("." + toCleanString(groups[i]));
-    label.innerHTML = createMenuOptionsContent(groups[i]);
-  }
+  return _createMenuOptions.apply(this, arguments);
 }
 
-function createOptionsItem(data, index) {
-  let item = "";
-  const menuItemData = data;
+function _createMenuOptions() {
+  _createMenuOptions = _asyncToGenerator(function* () {
+    for (let i = 0; i < groups.length; i++) {
+      const label = document.querySelector("." + toCleanString(groups[i]));
+      label.innerHTML = yield createMenuOptionsContent(groups[i]);
+    }
+  });
+  return _createMenuOptions.apply(this, arguments);
+}
 
-  if (!menuItemData.price) {
-    menuItemData.price = DEFAULT_PRICE;
-  }
+function createOptionsItem(_x, _x2) {
+  return _createOptionsItem.apply(this, arguments);
+}
 
-  if (!menuItemData.image) {
-    menuItemData.image = DEFAULT_IMAGE;
-  }
+function _createOptionsItem() {
+  _createOptionsItem = _asyncToGenerator(function* (data, index) {
+    let item = "";
+    const menuItemData = data;
 
-  if (!menuItemData.promo) {
-    menuItemData.promo = DEFAULT_PROMO;
-  }
+    if (!menuItemData.price) {
+      menuItemData.price = DEFAULT_PRICE;
+    }
 
-  if (menuItemData.sales) {
-    if (isPromo(menuItemData)) {
-      menuItemData.promo = `<div class="promo">
+    if (!menuItemData.image) {
+      menuItemData.image = DEFAULT_IMAGE;
+    }
+
+    if (!menuItemData.promo) {
+      menuItemData.promo = DEFAULT_PROMO;
+    }
+
+    if (menuItemData.sales) {
+      if (isPromo(menuItemData)) {
+        menuItemData.promo = `<div class="promo">
                               <img class="logo-promo" src="./images/award.svg"/>
                               Promo Almoço
                           </div>`;
-      menuItemData.pricePromo = menuItemData.sales[0].price;
-      const priceAux = menuItemData.pricePromo;
-      menuItemData.pricePromo = `<strike>R$${menuItemData.price.toFixed(2)}</strike>`;
-      menuItemData.price = priceAux;
+        menuItemData.pricePromo = menuItemData.sales[0].price;
+        const priceAux = menuItemData.pricePromo;
+        menuItemData.pricePromo = `<strike>R$${menuItemData.price.toFixed(2)}</strike>`;
+        menuItemData.price = priceAux;
+      } else {
+        menuItemData.pricePromo = "";
+        menuItemData.promo = "";
+      }
     } else {
       menuItemData.pricePromo = "";
       menuItemData.promo = "";
     }
-  } else {
-    menuItemData.pricePromo = "";
-    menuItemData.promo = "";
-  }
 
-  item = ` <li class="menu-item" onclick="showModal(${index})">
+    item = ` <li class="menu-item" onclick="showModal(${index})">
               <img class="prato-image" src="${menuItemData.image}">
               <div class="prato-wrapper">
                   <div class="name-wrapper">                         
@@ -318,7 +344,9 @@ function createOptionsItem(data, index) {
                   </div>
               </div>
           </li>`;
-  return item;
+    return item;
+  });
+  return _createOptionsItem.apply(this, arguments);
 }
 
 function verifyPromo() {
@@ -344,20 +372,27 @@ function verifyPromo() {
   }
 }
 
-function createMenuOptionsContent(group) {
-  let optionsData = "";
-
-  for (let i = 0; i < menuData.length; i++) {
-    const menuItemData = menuData[i];
-
-    if (toCleanString(menuItemData.group) === toCleanString(group)) {
-      optionsData += createOptionsItem(menuItemData, i);
-    }
-  }
-
-  return optionsData;
+function createMenuOptionsContent(_x3) {
+  return _createMenuOptionsContent.apply(this, arguments);
 } //renderizando input
 
+
+function _createMenuOptionsContent() {
+  _createMenuOptionsContent = _asyncToGenerator(function* (group) {
+    let optionsData = "";
+
+    for (let i = 0; i < menuData.length; i++) {
+      const menuItemData = menuData[i];
+
+      if (toCleanString(menuItemData.group) === toCleanString(group)) {
+        optionsData += yield createOptionsItem(menuItemData, i);
+      }
+    }
+
+    return optionsData;
+  });
+  return _createMenuOptionsContent.apply(this, arguments);
+}
 
 function renderInputSearch() {
   const header = document.querySelector(".restaurant-data");
@@ -376,10 +411,10 @@ function renderPage() {
 
 function _renderPage() {
   _renderPage = _asyncToGenerator(function* () {
-    setMenuData();
+    yield setMenuData();
     yield createHeader();
     renderInputSearch();
-    createMenu();
+    yield createMenu();
     document.querySelector("#loading").remove();
     createSearchEvent();
     setInterval(() => verifyPromo(), 100);
