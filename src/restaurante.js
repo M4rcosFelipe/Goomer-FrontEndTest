@@ -304,7 +304,7 @@ async function createOptionsItem(data,index){
 
   const menuItemData=data
 
-  if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}
+  if(!menuItemData.price) {menuItemData.price=DEFAULT_PRICE}  
   if(!menuItemData.image) {menuItemData.image=DEFAULT_IMAGE}
   if(!menuItemData.promo) {menuItemData.promo=DEFAULT_PROMO}
 
@@ -354,6 +354,23 @@ async function createOptionsItem(data,index){
   return item
 }
 
+
+
+async function createMenuOptionsContent(group){
+
+  let optionsData=""
+
+  for(let i=0;i<menuData.length;i++){
+
+    const menuItemData=menuData[i]
+
+    if(toCleanString(menuItemData.group)===toCleanString(group)){
+      optionsData+=await createOptionsItem(menuItemData,i)
+    }
+  }
+  return optionsData
+}
+
 function verifyPromo(){
 
   const items=document.querySelectorAll(".menu-item")
@@ -382,23 +399,6 @@ function verifyPromo(){
     }
   }
 }
-
-async function createMenuOptionsContent(group){
-
-  let optionsData=""
-
-  for(let i=0;i<menuData.length;i++){
-
-    const menuItemData=menuData[i]
-
-    if(toCleanString(menuItemData.group)===toCleanString(group)){
-      optionsData+=await createOptionsItem(menuItemData,i)
-    }
-  }
-  return optionsData
-}
-
-
 
 //renderizando input
 
@@ -453,55 +453,55 @@ function createSearchEvent(){
 }
 
 
-function buscarNoCardapio(){
+async function buscarNoCardapio(){
 
-    const palavra=toCleanString(document.querySelector(".buscar-no-cardapio").value)
+  const palavra=toCleanString(document.querySelector(".buscar-no-cardapio").value)
 
-    if(!palavra) return
+  if(!palavra) return
+  
+  const cardapio=document.querySelector("#cardapio")
+
+  if(!document.querySelector("#finded-container")){
+
+    findedContainerHTML=`<section id="finded-container">
     
-    const cardapio=document.querySelector("#cardapio")
-
-    if(!document.querySelector("#finded-container")){
-
-      findedContainerHTML=`<section id="finded-container">
-      
-                              <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
-                              <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
-                              
-                              <ul id="finded-list" class="options">
-                              
-                              </ul>
-                            </section>`
+                            <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
+                            <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
+                            
+                            <ul id="finded-list" class="options">
+                            
+                            </ul>
+                          </section>`
 
 
-      cardapio.insertAdjacentHTML("beforebegin",findedContainerHTML)
+    cardapio.insertAdjacentHTML("beforebegin",findedContainerHTML)
 
-      createFecharFindedContainer()
+    createFecharFindedContainer()
+  }
+
+  
+  const totalFinded=document.querySelector(".total-finded-number")
+  const findedList=document.querySelector("#finded-list")
+
+
+  let findedPratos=[]
+
+  for(let i=0;i<menuData.length;i++){
+    if(palavra===toCleanString(menuData[i].name)){
+      findedPratos.push(menuData[i])
     }
-
-   
-    const totalFinded=document.querySelector(".total-finded-number")
-    const findedList=document.querySelector("#finded-list")
+  }
 
 
-    let findedPratos=[]
+  findedList.innerHTML=""
 
-    for(let i=0;i<menuData.length;i++){
-      if(palavra===toCleanString(menuData[i].name)){
-        findedPratos.push(menuData[i])
-      }
+  totalFinded.innerText=findedPratos.length
+
+  if(findedPratos.length!==0){
+    for(let i=0;i<findedPratos.length;i++){
+      findedList.innerHTML+=await createOptionsItem(findedPratos[i],menuData.indexOf(findedPratos[i]))
     }
-
-
-    findedList.innerHTML=""
-
-    totalFinded.innerText=findedPratos.length
-
-    if(findedPratos.length!==0){
-      for(let i=0;i<findedPratos.length;i++){
-        findedList.innerHTML+=createOptionsItem(findedPratos[i],menuData.indexOf(findedPratos[i]))
-      }
-    }
+  }
 }
 
 

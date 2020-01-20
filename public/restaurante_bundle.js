@@ -349,6 +349,27 @@ function _createOptionsItem() {
   return _createOptionsItem.apply(this, arguments);
 }
 
+function createMenuOptionsContent(_x3) {
+  return _createMenuOptionsContent.apply(this, arguments);
+}
+
+function _createMenuOptionsContent() {
+  _createMenuOptionsContent = _asyncToGenerator(function* (group) {
+    let optionsData = "";
+
+    for (let i = 0; i < menuData.length; i++) {
+      const menuItemData = menuData[i];
+
+      if (toCleanString(menuItemData.group) === toCleanString(group)) {
+        optionsData += yield createOptionsItem(menuItemData, i);
+      }
+    }
+
+    return optionsData;
+  });
+  return _createMenuOptionsContent.apply(this, arguments);
+}
+
 function verifyPromo() {
   const items = document.querySelectorAll(".menu-item");
 
@@ -370,29 +391,8 @@ function verifyPromo() {
       }
     }
   }
-}
-
-function createMenuOptionsContent(_x3) {
-  return _createMenuOptionsContent.apply(this, arguments);
 } //renderizando input
 
-
-function _createMenuOptionsContent() {
-  _createMenuOptionsContent = _asyncToGenerator(function* (group) {
-    let optionsData = "";
-
-    for (let i = 0; i < menuData.length; i++) {
-      const menuItemData = menuData[i];
-
-      if (toCleanString(menuItemData.group) === toCleanString(group)) {
-        optionsData += yield createOptionsItem(menuItemData, i);
-      }
-    }
-
-    return optionsData;
-  });
-  return _createMenuOptionsContent.apply(this, arguments);
-}
 
 function renderInputSearch() {
   const header = document.querySelector(".restaurant-data");
@@ -435,42 +435,49 @@ function createSearchEvent() {
 }
 
 function buscarNoCardapio() {
-  const palavra = toCleanString(document.querySelector(".buscar-no-cardapio").value);
-  if (!palavra) return;
-  const cardapio = document.querySelector("#cardapio");
+  return _buscarNoCardapio.apply(this, arguments);
+}
 
-  if (!document.querySelector("#finded-container")) {
-    findedContainerHTML = `<section id="finded-container">
-      
-                              <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
-                              <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
-                              
-                              <ul id="finded-list" class="options">
-                              
-                              </ul>
-                            </section>`;
-    cardapio.insertAdjacentHTML("beforebegin", findedContainerHTML);
-    createFecharFindedContainer();
-  }
+function _buscarNoCardapio() {
+  _buscarNoCardapio = _asyncToGenerator(function* () {
+    const palavra = toCleanString(document.querySelector(".buscar-no-cardapio").value);
+    if (!palavra) return;
+    const cardapio = document.querySelector("#cardapio");
 
-  const totalFinded = document.querySelector(".total-finded-number");
-  const findedList = document.querySelector("#finded-list");
-  let findedPratos = [];
-
-  for (let i = 0; i < menuData.length; i++) {
-    if (palavra === toCleanString(menuData[i].name)) {
-      findedPratos.push(menuData[i]);
+    if (!document.querySelector("#finded-container")) {
+      findedContainerHTML = `<section id="finded-container">
+    
+                            <div class="fechar-finded-container"><img class="fechar-finded" src="images/excluir.png"/></div>
+                            <p class="total-finded-text">Total de itens encontrados: <span class="total-finded-number"></span></p>
+                            
+                            <ul id="finded-list" class="options">
+                            
+                            </ul>
+                          </section>`;
+      cardapio.insertAdjacentHTML("beforebegin", findedContainerHTML);
+      createFecharFindedContainer();
     }
-  }
 
-  findedList.innerHTML = "";
-  totalFinded.innerText = findedPratos.length;
+    const totalFinded = document.querySelector(".total-finded-number");
+    const findedList = document.querySelector("#finded-list");
+    let findedPratos = [];
 
-  if (findedPratos.length !== 0) {
-    for (let i = 0; i < findedPratos.length; i++) {
-      findedList.innerHTML += createOptionsItem(findedPratos[i], menuData.indexOf(findedPratos[i]));
+    for (let i = 0; i < menuData.length; i++) {
+      if (palavra === toCleanString(menuData[i].name)) {
+        findedPratos.push(menuData[i]);
+      }
     }
-  }
+
+    findedList.innerHTML = "";
+    totalFinded.innerText = findedPratos.length;
+
+    if (findedPratos.length !== 0) {
+      for (let i = 0; i < findedPratos.length; i++) {
+        findedList.innerHTML += yield createOptionsItem(findedPratos[i], menuData.indexOf(findedPratos[i]));
+      }
+    }
+  });
+  return _buscarNoCardapio.apply(this, arguments);
 }
 
 function fechaFindedContainer() {

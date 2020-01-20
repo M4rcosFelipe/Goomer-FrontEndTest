@@ -177,6 +177,8 @@ p{
     width:115px;
     height:115px;
     align-self: center;
+    object-fit: cover;
+    justify-self: center;
 }
 
 .prato-name{
