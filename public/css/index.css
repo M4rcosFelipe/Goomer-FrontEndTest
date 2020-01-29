@@ -108,6 +108,8 @@ h1{
     width:100px;
     height:100px;
     grid-row:1/3;
+    object-fit: cover;
+
 }
 
 .restaurant-name{

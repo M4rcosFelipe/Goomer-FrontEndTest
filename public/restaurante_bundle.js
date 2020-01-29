@@ -2,13 +2,18 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-//variaveis globais
 let groups = [];
 let listaRestaurantes;
 const DEFAULT_IMAGE = "../public/images/dish.png";
 const DEFAULT_PRICE = 0;
 const DEFAULT_PROMO = 0;
 const RESTAURANT_ID = getId();
+let Cart = {
+  items: [],
+  total: 0
+};
+let identificadores = [];
+let identificador = 0;
 var menuData = "";
 
 function getId() {
@@ -131,8 +136,6 @@ function createHorarioHeader(restaurante) {
     horariosContent = "";
 
     for (let j = 0; j < restaurante.hours.length; j++) {
-      console.log(converteHora(restaurante.hours[j].from), converteHora(restaurante.hours[j].to));
-
       if (Number(converteHora(restaurante.hours[j].from)) > Number(converteHora(restaurante.hours[j].to))) {
         restaurante.hours[j].days.push(restaurante.hours[j].days[restaurante.hours[j].days.length - 1] + 1);
       }
@@ -190,8 +193,8 @@ function verificaDia(dias) {
   const today = new Date(); //teste
   // today.setDate() 
 
-  const diaAtual = today.getDay() + 1;
-  console.log(`Dia atual: ${diaAtual}`);
+  const diaAtual = today.getDay() + 1; // console.log(`Dia atual: ${diaAtual}`)
+
   const isDay = dias.indexOf(diaAtual);
   return isDay !== -1 ? true : false;
 }
@@ -202,10 +205,9 @@ function verificaHora(horas) {
   const to = converteHora(horas.to);
   const now = new Date(); //teste
   // now.setHours()
-
-  console.log(`Hora atual: ${now.getHours()}`);
-  console.log(`from: ${from}`);
-  console.log(`to: ${to}`);
+  // console.log(`Hora atual: ${now.getHours()}`)
+  // console.log(`from: ${from}`)
+  // console.log(`to: ${to}`)
 
   if (now.getHours() >= from && now.getHours() < to) {
     return true;
@@ -497,6 +499,9 @@ function showModal(index) {
   const modal = createModal(modalData);
   const header = document.querySelector("header");
   header.insertAdjacentHTML("beforebegin", modal);
+  document.querySelector(".adicionar").addEventListener("click", () => {
+    addToCart(modalData);
+  });
 }
 
 function createModal(data) {
@@ -552,7 +557,57 @@ function changeQuantity(operation) {
 
   valorPreco = Number(valorPreco);
   spanPreco.innerText = "R$ " + (inputQuantidade.value * valorPreco).toFixed(2);
-} //chamadas//
+} //carrinho//
 
+
+function addToCart(data) {
+  const quantidade = Number(document.querySelector("#quantidade").value);
+  const key = Cart.items.findIndex(item => item.prato.name === data.name);
+
+  if (key !== -1) {
+    Cart.items[key].quantidade += quantidade;
+  } else {
+    const pedido = {
+      identifier: identificador,
+      prato: data,
+      quantidade: quantidade
+    };
+    Cart.items.push(pedido);
+  }
+
+  fechaModal();
+  renderCarrinho();
+}
+
+function renderCarrinho() {
+  if (!Cart.items) return;
+  let subtotal = 0;
+  let desconto = 0.1;
+  const subtotalElement = document.querySelector(".subtotal-value");
+  const descontoElement = document.querySelector(".desconto-value");
+  const totalElement = document.querySelector(".total-value");
+  const carrinhoElement = document.querySelector(".carrinho-items");
+  carrinhoElement.innerHTML = "";
+
+  for (let i = 0; i < Cart.items.length; i++) {
+    carrinhoElement.innerHTML += `<div class="cart-item">
+                            <img class="cart-item-image" src="${Cart.items[i].prato.image}">
+                            <p class="cart-item-name">${Cart.items[i].prato.name}</p>
+                            <span class="cart-item-preco">R$${Cart.items[i].prato.price.toFixed(2)}</span>
+                            <span class="cart-item-quantidade">x${Cart.items[i].quantidade}</span>
+                        </div>`;
+    subtotal += Cart.items[i].quantidade * Cart.items[i].prato.price;
+  }
+
+  Cart.total = subtotal - subtotal * desconto;
+  subtotalElement.innerHTML = "R$" + subtotal.toFixed(2);
+  totalElement.innerHTML = "R$" + Cart.total.toFixed(2);
+  descontoElement.innerHTML = "R$" + (subtotal * desconto).toFixed(2);
+}
+
+document.querySelector(".limpar").addEventListener("click", () => {
+  Cart.items = [];
+  renderCarrinho();
+}); //chamadas//
 
 renderPage();
